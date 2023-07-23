@@ -14,10 +14,15 @@ function statment(invoices, plays){
     let totalAmount   = 0;
     // 포인트
     let volumeCredits  = 0;
+    // 고객 명 추출
     let result = `청구 내역(고객명 ${invoices.customer}) \n`;
+    // 금액 변환 Library
     const format = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format;
 
+    // 회원이 봤던 연극 목록 Loop
     for(let perf of invoices.performances){
+
+        // plays.Json에서 같은 이름으로 객체 추출
         const play = plays[perf.playID];
         // 가격
         let thisAmount = 0;
@@ -25,11 +30,15 @@ function statment(invoices, plays){
         switch(play.type){
             case 'tragedy': // 비극
                 thisAmount = 40_000;
-                if (perf.audience > 30) thisAmount += 1_000 * (perf.audience - 30);
+                if (perf.audience > 30){
+                    thisAmount += 1_000 * (perf.audience - 30); 
+                } 
                 break;
             case 'comedy':  // 희극
                 thisAmount = 30_000;
-                if (perf.audience > 20) thisAmount += 10_000 + 500 * (perf.audience - 20);
+                if (perf.audience > 20){
+                    thisAmount += 10_000 + 500 * (perf.audience - 20);
+                } 
                 thisAmount += 300 * perf.audience;
                 break;
             default:
@@ -39,7 +48,7 @@ function statment(invoices, plays){
         // 포인트 적립
         volumeCredits += Math.max(perf.audience - 30, 0);
 
-        // 희극 관객 5명  마다 추가 포이느 제공
+        // 희극 관객 5명  마다 추가 포인트 제공
         if("comedy" === play.type) volumeCredits += Math.floor(perf.audience/5);
 
         // 청구 내역을 출력한다.
