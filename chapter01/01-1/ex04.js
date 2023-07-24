@@ -4,28 +4,25 @@
     const invoices = require('../json/invoices.json');
 
     /***
-     * 💬 난해한 변수명은 직관적인 이름으로 변경해주자
-     * - 컴퓨터가 이해하는 코드는 바보도 작성 가능하다.
-     *   사람이 이해하는 코드를 작성하는 것이 진정한 실력이다.
-     * - 따라서 일이 명확하게 드러다냐하며 이때 변수의 이름은 커다란 역할을 한다.
+     * 💬 매개변수의 경우 역할이 뚜렷하지 않을 경우 부정 관사(a/an)을 붙여주자
      */
-    function amountFor(perf, play){
+    function amountFor(aPerformance, play){
         // let thisAmount = 0;   👎
         let result = 0;       // 👍
 
         switch(play.type){
             case 'tragedy': // 비극
                 result = 40_000;
-                if (perf.audience > 30){
-                    result += 1_000 * (perf.audience - 30); 
+                if (aPerformance.audience > 30){
+                    result += 1_000 * (aPerformance.audience - 30); 
                 } 
                 break;
             case 'comedy':  // 희극
                 result = 30_000;
-                if (perf.audience > 20){
-                    result += 10_000 + 500 * (perf.audience - 20);
+                if (aPerformance.audience > 20){
+                    result += 10_000 + 500 * (aPerformance.audience - 20);
                 } 
-                result += 300 * perf.audience;
+                result += 300 * aPerformance.audience;
                 break;
             default:
                 throw new Error(`알 수 없는 장르: ${play.type}`);
