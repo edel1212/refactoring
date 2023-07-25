@@ -43,8 +43,9 @@
             //  👉 변수 인라인 적용 :: playFor(perf) 함수를 불러와 적용
             if("comedy" === playFor(perf).type) volumeCredits += Math.floor(perf.audience/5);
 
-            //  👉 변수 인라인 적용 :: playFor(perf) 함수를 불러와 적용
+            //  👉 변수 인라인 적용 :: playFor(perf) 함수를 불러와 적용 ,  amountFor(perf) 적용
             result += `${playFor(perf).name}: ${format(amountFor(perf) / 100)} ${perf.audience}석\n`;
+            //  👉 변수 인라인 적용 :: amountFor(perf) 적용
             totalAmount += amountFor(perf);
         }//for 
         result += `총액 ${format(totalAmount / 100)}\n`;
