@@ -38,17 +38,14 @@
 
         for(let perf of invoices.performances){
 
-            // let thisAmount = amountFor(perf, playFor(perf)); // 👎
-            let thisAmount = amountFor(perf);                   // 👍 불필요한 매개변수 제거
-
             volumeCredits += Math.max(perf.audience - 30, 0);
             
             //  👉 변수 인라인 적용 :: playFor(perf) 함수를 불러와 적용
             if("comedy" === playFor(perf).type) volumeCredits += Math.floor(perf.audience/5);
 
             //  👉 변수 인라인 적용 :: playFor(perf) 함수를 불러와 적용
-            result += `${playFor(perf).name}: ${format(thisAmount / 100)} ${perf.audience}석\n`;
-            totalAmount += thisAmount;
+            result += `${playFor(perf).name}: ${format(amountFor(perf) / 100)} ${perf.audience}석\n`;
+            totalAmount += amountFor(perf);
         }//for 
         result += `총액 ${format(totalAmount / 100)}\n`;
         result += `적립 포인트 ${volumeCredits}점\n`;
