@@ -3,8 +3,9 @@
     const plays = require('../json/plays.json');
     const invoices = require('../json/invoices.json');
 
-    function amountFor(aPerformance, play){
-        switch(play.type){
+    function amountFor(aPerformance){
+        //  👉 변수 인라인 적용 :: playFor(perf) 함수를 불러와 적용
+        switch(playFor(aPerformance).type){
             case 'tragedy': // 비극
                 result = 40_000;
                 if (aPerformance.audience > 30){
@@ -19,7 +20,8 @@
                 result += 300 * aPerformance.audience;
                 break;
             default:
-                throw new Error(`알 수 없는 장르: ${play.type}`);
+                //  👉 변수 인라인 적용 :: playFor(perf) 함수를 불러와 적용
+                throw new Error(`알 수 없는 장르: ${playFor(aPerformance).type}`);
         }// switch
         return result;
     }
@@ -35,24 +37,17 @@
         const format = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format;
 
         for(let perf of invoices.performances){
-            /**
-             * 해당 변수와 같은 형식 들때문에 로컬 범위에 존재하는 이름이 늘어나서 추출 작업이 복잡해지기에
-             * 아래의 방법과 같이 메서드 형태로 뺴내어서 변수가 아닌 메서드를 CallBack 받는 식으로 진행하면 좋다.
-             * 
-             * 👉 이러한 것을 임시 변수를 질의 함수로 바꾸는 것이며 
-             *    해당 방법은 Step1 이며 ex06,ex7 단계로 점차 변화한다.
-             */
-            //const play = plays[perf.playID];   // 👎
-            const play = playFor(perf);          // 👍
 
-            /** 👉 변경한  Mehtod로 적용 */
-            let thisAmount = amountFor(perf, play);
+            // let thisAmount = amountFor(perf, playFor(perf)); // 👎
+            let thisAmount = amountFor(perf);                   // 👍 불필요한 매개변수 제거
 
             volumeCredits += Math.max(perf.audience - 30, 0);
+            
+            //  👉 변수 인라인 적용 :: playFor(perf) 함수를 불러와 적용
+            if("comedy" === playFor(perf).type) volumeCredits += Math.floor(perf.audience/5);
 
-            if("comedy" === play.type) volumeCredits += Math.floor(perf.audience/5);
-
-            result += `${play.name}: ${format(thisAmount / 100)} ${perf.audience}석\n`;
+            //  👉 변수 인라인 적용 :: playFor(perf) 함수를 불러와 적용
+            result += `${playFor(perf).name}: ${format(thisAmount / 100)} ${perf.audience}석\n`;
             totalAmount += thisAmount;
         }//for 
         result += `총액 ${format(totalAmount / 100)}\n`;
