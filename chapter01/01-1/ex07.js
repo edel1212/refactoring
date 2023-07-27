@@ -34,10 +34,10 @@
      *  👉 기존 Loop 문에서 계산하면 volumeCredits값을 
      *      메서드로 뺴내어 코드를 간결하게 만들어 줄 수 있음     
      */
-    function volumeCreditsFor(perf){
+    function volumeCreditsFor(aPerformance){
         let volumeCredits = 0;
-        volumeCredits += Math.max(perf.audience - 30, 0);
-        if("comedy" === playFor(perf).type) volumeCredits += Math.floor(perf.audience/5);
+        volumeCredits += Math.max(aPerformance.audience - 30, 0);
+        if("comedy" === playFor(aPerformance).type) volumeCredits += Math.floor(aPerformance.audience/5);
         return volumeCredits;
     }
 
