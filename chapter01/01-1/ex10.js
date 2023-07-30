@@ -59,9 +59,9 @@
      * 👉 기존에 statment()에서 사용되던 청구서 HTML 만드는 로직을
      *    메서드로 분리하여 만듬
      */
-    function rederPlainText(data, invoice, plays){
-        let result = `청구 내역(고객명 ${invoices.customer}) \n`;
-        for(let perf of invoices.performances){
+    function rederPlainText(data, plays){
+        let result = `청구 내역(고객명 ${data.customer}) \n`;
+        for(let perf of data.performances){
             result += `${playFor(perf).name}: ${usd(amountFor(perf))} ${perf.audience}석\n`;
         }//for 
 
@@ -71,10 +71,15 @@
     }
 
     function statment(invoices, plays){       
-        // 👉 중앙 데이터 구조로 사용될 변수 선언 
+        // 👉 중앙 데이터 구조로 사용될 변수 선언 (받아오는 2개의 JSON 매개변수를 하나로 합쳐서 사용하기 위함)
         const statementData = {};
+        // 👉 invoices 데이터 추가
+        statementData.customer = invoices.customer;
+        // 👉 performances 데이터 추가
+        statementData.performances = invoices.performances;
+
         // 👉 기존에 사용되던 로직을 메서드로 분리 후 "중앙 데이터 구조"를 추가 매게변수로 전달
-        return rederPlainText(statementData, invoices, plays);
+        return rederPlainText(statementData, plays);
     }
 
     console.log(statment(invoices, plays));
