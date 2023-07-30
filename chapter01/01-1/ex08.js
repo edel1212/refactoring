@@ -45,11 +45,13 @@
      * 
      *    👉 여기서 기존 함수명이 format()였기에 해당 함수를 사용할 경우 직관적으로 한눈에 의미를 확인하기
      *       어려우며 비슷한 이름의 제공되는 라이브러리가 많아 햇갈리는 경우가 많음 따라서 함수명 변경
-     *       - format()👎 => formtAsUSD()👍 
+     *       - format()👎 => usd()👍 
      */
-    function formtAsUSD(aNumber){
+    function usd(aNumber){
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 })
-                .format(aNumber); // 기존에는 선언 후 값을 대입 하였이나 이제는 변수 생성 시 바로 적용 되게 끔 변경
+                // 기존에는 선언 후 값을 대입 하였이나 이제는 변수 생성 시 바로 적용 되게 끔 변경 
+                // 단위 변경 코드도 함수내에서 적용 `(aNumber / 100)` 부분
+                .format(aNumber / 100 ); 
     }
 
     function statment(invoices, plays){
@@ -63,11 +65,11 @@
 
             volumeCredits = volumeCreditsFor(perf);
 
-            result += `${playFor(perf).name}: ${formtAsUSD(amountFor(perf) / 100)} ${perf.audience}석\n`;
+            result += `${playFor(perf).name}: ${usd(amountFor(perf))} ${perf.audience}석\n`;
             totalAmount += amountFor(perf);
         }//for 
 
-        result += `총액 ${formtAsUSD(totalAmount / 100)}\n`;
+        result += `총액 ${usd(totalAmount)}\n`;
         result += `적립 포인트 ${volumeCredits}점\n`;
 
         return result;
