@@ -33,6 +33,8 @@
     /**
      *  👉 기존 Loop 문에서 계산하면 volumeCredits값을 
      *      메서드로 뺴내어 코드를 간결하게 만들어 줄 수 있음     
+     * 
+     *   👉 받아들이는 매게 변수 또한 이름을 직관적으로 변경해 줌 
      */
     function volumeCreditsFor(aPerformance){
         let volumeCredits = 0;
