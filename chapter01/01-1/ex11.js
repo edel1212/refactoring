@@ -85,7 +85,6 @@
         statementData.customer = invoices.customer;
         // 👉 JSON 데이터를 바로 사용 하는 것이 아닌 얕은 복사를 사용
         statementData.performances = invoices.performances.map(enrichPerformance);
-        console.log(statementData);
         return rederPlainText(statementData, plays);
     }
 
