@@ -55,14 +55,11 @@
         return result;
     }
 
-    /**
-     * 👉 기존에 statment()에서 사용되던 청구서 HTML 만드는 로직을
-     *    메서드로 분리하여 만듬
-     */
     function rederPlainText(data, plays){
         let result = `청구 내역(고객명 ${data.customer}) \n`;
         for(let perf of data.performances){
-            result += `${playFor(perf).name}: ${usd(amountFor(perf))} ${perf.audience}석\n`;
+            // 👉 기존 playFor(perf).name 사용 부분을 data에서 가져오도록 수정 
+            result += `${perf.play.name}: ${usd(amountFor(perf))} ${perf.audience}석\n`;
         }//for 
 
         result += `총액 ${usd(totalAmount())}\n`;
@@ -70,15 +67,25 @@
         return result;
     }
 
-    function statment(invoices, plays){       
-        // 👉 중앙 데이터 구조로 사용될 변수 선언 (받아오는 2개의 JSON 매개변수를 하나로 합쳐서 사용하기 위함)
-        const statementData = {};
-        // 👉 invoices 데이터 추가 (고객 정보)
-        statementData.customer = invoices.customer;
-        // 👉 performances 데이터 추가 (공연 정보)
-        statementData.performances = invoices.performances;
+    /**
+     * 👉 얕은 복사를 하는 함수 
+     *    - 사용 이유는 함수로 건네는 데이터를 수정하는 것은 좋은 방법이 아니기 떄문이다.
+     *    - 받아오는 데이터들이 가줒 변하게 되면 로직이 복잡해 지기떄문에 최대한 불변 취급 해주자.
+     */
+    function enrichPerformance(aPerformance){
+        // 👉 얕은 복사 [ 메모리값을 공유 ]
+        const result = Object.assign({},aPerformance);
+        // 👉 Object에 play Data를 추가
+        result.play = playFor(result);
+        return result;
+    }
 
-        // 👉 기존에 사용되던 로직을 메서드로 분리 후 "중앙 데이터 구조"를 추가 매게변수로 전달
+    function statment(invoices, plays){       
+        const statementData = {};
+        statementData.customer = invoices.customer;
+        // 👉 JSON 데이터를 바로 사용 하는 것이 아닌 얕은 복사를 사용
+        statementData.performances = invoices.performances.map(enrichPerformance);
+        console.log(statementData);
         return rederPlainText(statementData, plays);
     }
 
