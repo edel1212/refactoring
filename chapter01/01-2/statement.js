@@ -1,7 +1,10 @@
 import createStatementData from './createStatementData.js'
+import invoices from '../json/invoices.json' assert { type: "json" };
+import plays from '../json/plays.json' assert { type: "json" };
 
-function statment(invoice, plays){
-    return renderPlainText(createStatementData(invoice,plays))
+
+function statment(invoices, plays){
+    return renderPlainText(createStatementData(invoices,plays))
 }
 
 function renderPlainText(data, plays){
@@ -11,12 +14,12 @@ function renderPlainText(data, plays){
     }//for 
 
     result += `총액 ${usd(data.totalAmount)}\n`;
-    result += `적립 포인트 ${data.totalVolumeCrdeits}점\n`;
+    result += `적립 포인트 ${data.totalVolumeCredits}점\n`;
     return result;
 }
 
-function htmlStatement(invoice, plays){
-    return renderHtml(invoice, plays);
+function htmlStatement(invoices, plays){
+    return renderHtml(invoices, plays);
 }
 
 function renderHtml(data){
@@ -29,7 +32,7 @@ function renderHtml(data){
     }//for 
     result += "</table>";
     result += `<p>총액 ${usd(data.totalAmount)}</p>`;
-    result += `<p>적립 포인트 ${data.totalVolumeCrdeits}점 </p>`;
+    result += `<p>적립 포인트 ${data.totalVolumeCredits}점 </p>`;
     return result;
 }
 
@@ -39,6 +42,4 @@ function usd(aNumber){
 }
 
 
-const plays = '../json/plays.json';
-const invoices = '../json/invoices.json';
 console.log(statment(invoices, plays));

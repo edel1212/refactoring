@@ -1,11 +1,9 @@
 export default function createStatementData(invoice, plays) {
     const result = {}
-
     result.customer = invoice.customer
-    console.log("@@@");
     result.performances = invoice.performances.map(enrichPerformance)
-    result.totalAmount = totalAmount(statementData)
-    result.totalVolumeCredits = totalVolumeCredits(statementData)
+    result.totalAmount = totalAmount(result)
+    result.totalVolumeCredits = totalVolumeCredits(result)
     return result
 
     function enrichPerformance(aPerformance) {
