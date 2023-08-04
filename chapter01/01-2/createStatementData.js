@@ -5,10 +5,10 @@ export default function createStatementData(invoice, plays) {
      *  - 값을 주입하여 사용 ( 값을 반환하는 함수를 적용 )
      */
     const result = {}
-    result.customer             = invoice.customer
-    result.performances         = invoice.performances.map(enrichPerformance)
-    result.totalAmount          = totalAmount(result)
-    result.totalVolumeCredits   = totalVolumeCredits(result)
+    result.customer             = invoice.customer           // invoices JSON 파일의 customer 정보
+    result.performances         = invoice.performances.map(enrichPerformance)   // 얉은 복제본 JSON 생성
+    result.totalAmount          = totalAmount(result)        // reduce를 통해 최종 가격 누적 계산           
+    result.totalVolumeCredits   = totalVolumeCredits(result) // reduce를 통해 최종 포인트 누적 계산           
     return result
 
     /****************************** */
@@ -16,11 +16,12 @@ export default function createStatementData(invoice, plays) {
     // 내부에서 선언하여 사용함
     /****************************** */
 
+    // 얕은 복사를 통해 JSON 데이터를 복사 생성
     function enrichPerformance(aPerformance) {
-        const result = Object.assign({}, aPerformance)
-        result.play = playFor(result)
-        result.amount = amountFor(result)
-        result.volumeCredits = volumneCreditFor(result)
+        const result         = Object.assign({}, aPerformance)  // 복사
+        result.play          = playFor(result)                  // plays JSON 파일에서 값을 추출
+        result.amount        = amountFor(result)                // 장르별 가격 측정
+        result.volumeCredits = volumneCreditFor(result)         // 포인트 측정
         return result
     }
     function playFor(aPerformance) {
@@ -46,7 +47,7 @@ export default function createStatementData(invoice, plays) {
         default:
             throw new Error(`알 수 없는 장르: ${aPerformance.play.type}`)
         }
-        // (2)
+
         return result
     }
     function volumneCreditFor(perf) {
