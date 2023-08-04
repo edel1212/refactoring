@@ -2,11 +2,12 @@ import createStatementData from './createStatementData.js'
 import invoices from '../json/invoices.json' assert { type: "json" };
 import plays from '../json/plays.json' assert { type: "json" };
 
-
+// 로직 실행 함수
 function statment(invoices, plays){
     return renderPlainText(createStatementData(invoices,plays))
 }
 
+// 결과 내역 출력
 function renderPlainText(data, plays){
     let result = `청구 내역(고객명 ${data.customer}) \n`;
     for(let perf of data.performances){
@@ -36,6 +37,7 @@ function renderHtml(data){
     return result;
 }
 
+// 달러 계산 로직
 function usd(aNumber){
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 })
             .format(aNumber / 100 ); 

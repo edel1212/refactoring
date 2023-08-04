@@ -1,10 +1,20 @@
+// 로직 함수를 모듈화 시킴
 export default function createStatementData(invoice, plays) {
+    /**
+     * 사용될 값을 복사할 Object를 생성
+     *  - 값을 주입하여 사용 ( 값을 반환하는 함수를 적용 )
+     */
     const result = {}
-    result.customer = invoice.customer
-    result.performances = invoice.performances.map(enrichPerformance)
-    result.totalAmount = totalAmount(result)
-    result.totalVolumeCredits = totalVolumeCredits(result)
+    result.customer             = invoice.customer
+    result.performances         = invoice.performances.map(enrichPerformance)
+    result.totalAmount          = totalAmount(result)
+    result.totalVolumeCredits   = totalVolumeCredits(result)
     return result
+
+    /****************************** */
+    // 상단에 Object에 주입 될 반환 함수를
+    // 내부에서 선언하여 사용함
+    /****************************** */
 
     function enrichPerformance(aPerformance) {
         const result = Object.assign({}, aPerformance)
@@ -34,7 +44,7 @@ export default function createStatementData(invoice, plays) {
             result += 300 * aPerformance.audience
             break
         default:
-            throw new Error(`알 수 없는 장르: ${playFor(aPerformance).type}`)
+            throw new Error(`알 수 없는 장르: ${aPerformance.play.type}`)
         }
         // (2)
         return result
