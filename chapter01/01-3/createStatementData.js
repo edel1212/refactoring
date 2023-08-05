@@ -57,7 +57,7 @@ export default function createStatementData(invoice, plays) {
         const calcualtor = new PerformanceCalculator(aPerformance, playFor(aPerformance));
 
         const result         = Object.assign({}, aPerformance);  
-        // 
+        
         result.play          = calcualtor.play;                  
         result.amount        = calcualtor.amount;                
         result.volumeCredits = calcualtor.volumneCreditFor;         
