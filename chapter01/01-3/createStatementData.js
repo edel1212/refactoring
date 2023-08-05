@@ -20,15 +20,25 @@ class PerformanceCalculator{
             case 'comedy': //희극
                 result = 30000
                 if (this.performance.audience > 20) {
-                    result += 10000 + 500 * (performance.audience - 20)
+                    result += 10000 + 500 * (this.performance.audience - 20)
                 }
-                result += 300 * performance.audience
+                result += 300 * this.performance.audience
                 break
             default:
-                throw new Error(`알 수 없는 장르: ${performance.play.type}`)
+                throw new Error(`알 수 없는 장르: ${this.play.type}`)
         }
         return result
     }// get 
+
+    // 포인트 계산 함수
+    get volumneCreditFor(){
+        let result = 0
+        result += Math.max(this.performance.audience - 30, 0)
+        // 희극 관객 5명마다 추가 포인트를 제공한다
+        if (this.play.type === 'comedy') result += Math.floor(this.performance.audience / 5)
+        return result
+    }
+
 }
 
 export default function createStatementData(invoice, plays) {
@@ -39,31 +49,28 @@ export default function createStatementData(invoice, plays) {
     result.totalVolumeCredits   = totalVolumeCredits(result) // reduce를 통해 최종 포인트 누적 계산           
     return result
 
+    /**
+     * 👉 필요 값들을 객체화 시켜 관리하여 더욱 가독성이 올라가고 유지보수가 쉬어짐
+     */
     function enrichPerformance(aPerformance) {
         // 계산기 클래스 생성자 생성
         const calcualtor = new PerformanceCalculator(aPerformance, playFor(aPerformance));
 
         const result         = Object.assign({}, aPerformance);  
-        result.play          = playFor(result);                  
+        // 
+        result.play          = calcualtor.play;                  
         result.amount        = calcualtor.amount;                
-        result.volumeCredits = volumneCreditFor(result);         
+        result.volumeCredits = calcualtor.volumneCreditFor;         
         return result
     }
     function playFor(aPerformance) {
         return plays[aPerformance.playID]
     }
 
-    function amountFor(aPerformance) {
-        return new PerformanceCalculator(aPerformance, playFor(aPerformance)).amount;
-    }
+    function amountFor(aPerformance) {return new PerformanceCalculator(aPerformance, playFor(aPerformance)).amount;}
 
-    function volumneCreditFor(perf) {
-        let result = 0
-        result += Math.max(perf.audience - 30, 0)
-        // 희극 관객 5명마다 추가 포인트를 제공한다
-        if (playFor(perf).type === 'comedy') result += Math.floor(perf.audience / 5)
-        return result
-    }
+    function volumneCreditFor(perf) {return new PerformanceCalculator(aPerformance, playFor(aPerformance)).volumneCreditFor;}
+
     function totalAmount(data) {
         return data.performances.reduce((total, p) => total + p.amount, 0)
     }
