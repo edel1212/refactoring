@@ -1,6 +1,13 @@
-// 👉 생성자를 만드는 팩터리 함수 생성
+/**
+ * 팩터리 함수 장르에 맞춰 생성자 생성
+ */
 function createPerformanceCalclator(aPerformance, aPlay){
-    return new PerformanceCalculator(aPerformance, aPlay);
+    switch (aPlay.type) {
+        case 'tragedy': return new TragedyCalculator(aPerformance, aPlay); //비극
+        case 'comedy' : return new ComedyCalculator(aPerformance, aPlay);  //희극            
+    default:
+        throw new Error(`알 수 없는 장르: ${aPlay.type}`)
+    }
 }
 
 class PerformanceCalculator{
@@ -10,27 +17,7 @@ class PerformanceCalculator{
     }// constructor
 
     // 금액 계산 함수
-    get amount(){
-        let result = 0
-        switch (this.play.type) {
-            case 'tragedy': //비극
-                result = 40000
-                if (this.performance.audience > 30) {
-                    result += 1000 * (this.performance.audience - 30)
-                }
-                break
-            case 'comedy': //희극
-                result = 30000
-                if (this.performance.audience > 20) {
-                    result += 10000 + 500 * (this.performance.audience - 20)
-                }
-                result += 300 * this.performance.audience
-                break
-            default:
-                throw new Error(`알 수 없는 장르: ${this.play.type}`)
-        }
-        return result
-    }// get 
+    get amount(){ throw new Error("상속 받는 서버 클래스에서 처리함"); }// get 
 
     // 포인트 계산 함수
     get volumneCreditFor(){
@@ -40,7 +27,27 @@ class PerformanceCalculator{
         if (this.play.type === 'comedy') result += Math.floor(this.performance.audience / 5)
         return result
     }
+}
 
+// 비극장르 Class
+class TragedyCalculator extends PerformanceCalculator{
+    // @Override 시킴
+    get amount(){
+        let result = 40000
+        if (this.performance.audience > 30) result += 1000 * (this.performance.audience - 30);
+        return result;
+    }
+}
+
+// 비극장르 Class
+class ComedyCalculator extends PerformanceCalculator{
+    // @Override 시킴
+    get amount(){
+        let result = 30000
+        if (this.performance.audience > 20) result += 10000 + 500 * (this.performance.audience - 20);
+        result += 300 * this.performance.audience;
+        return result;
+    }
 }
 
 export default function createStatementData(invoice, plays) {
