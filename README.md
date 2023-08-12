@@ -33,3 +33,125 @@
     - 반복문
       - 반복문 내부의 로직이 길어 진다면 독립된 함수로 추출하여 생성한다.
 
+
+### 긴 매개변수 목록
+- 매개변수 목록이 길어지면 그 자체로 이해하가 어려우므로 리팰토링 해줄 필요가 있다.
+- 다른 매개 변수에서 값을 얻어 와야하는 매개 변수가 있는데 이런 경우 `매개변수를 질의 함수 바꾸기`로 제거 할 수 있다.
+```javscript
+// 👎 원래 코드
+class ComedyCalculator extends PerformanceCalculator {
+  get amount() {
+    let result = 30000;
+    if (this.performance.audience > 20) {
+      result += 10000 + 500 * (this.performance.audience - 20);
+    }
+    result += 300 * this.performance.audience;
+    return result;
+  }
+}
+
+/*************************************************************************************/
+/*************************************************************************************/
+/*************************************************************************************/
+
+// 👍 매개변수를 질의 함수로 바꿈 
+class ComedyCalculator extends PerformanceCalculator {
+  get amount() {
+    return 30000 + this.bonusAmount;
+  }
+
+  get bonusAmount() {
+    return this.overThresholdAmount + this.perAudienceAmount;
+  }
+
+  get overThresholdAmount() {
+   // 👉 if (this.performance.audience > 20) 대체 가능 이유는 20 보다 큰지 확인 하는 것이기 떄문 생각해보면 당연한것 !
+    return Math.max(this.performance.audience - 20, 0) * 500;
+  }
+
+  get perAudienceAmount() {
+    return 300 * this.performance.audience;
+  }
+}
+```
+- 사용 중인 데이터 구조에서 값들을 뽑아서 각가의 별개의 매개변수를 전달하는 코드라면 `객체 통째로 넘기기`를 적용해서 원본 데이터 구조를 그대로 전달한다.
+- 항상 함께 전달되는 매개변수들의 그룹이 있다면 해댕 목록의 변수들을 `매개변수 객체 만들기`를 사용해주자
+- 함수의 동장 방식을 정하는 플래그 역할의 매개변수는 `플래그 인수 제거하기`로 없애준다.
+  - 코드를 이해하기 어려워지기 때문 이럴 경우 메서드를 `2개로 나눠서` 사용해주는것이 더욱 가독성이 높디.
+```javascript
+// 👎 원래 코드
+function calculateTotal(amount, applyDiscount) {
+  if (applyDiscount) {
+    // 할인을 적용하는 로직
+    return amount * 0.9;
+  } else {
+    return amount;
+  }
+}
+        
+/*************************************************************************************/
+/*************************************************************************************/
+/*************************************************************************************/
+
+// 👍 메서드를 분리함
+function calculateTotalWithoutDiscount(amount) {
+  return amount;
+}
+
+function calculateTotalWithDiscount(amount) {
+  return amount * 0.9;
+}
+```
+- 클래스를 활용 하는 것도 매개변수 목록을 줄이는데 효적인 수단이다.
+  - 여러 개의 함수가 특정 매개변수들의 값을 공통적으로 사용할 경우 `여러 함수를 클래스로 묶어` 사용해 주자.
+```javascript
+// 👎 원래 코드
+function calculateTotalWithDiscount(amount, applyDiscount) {
+  let total = amount;
+  if (applyDiscount) {
+    total *= 0.9;
+  }
+  return total;
+}
+
+function calculateTax(amount, taxRate) {
+  return amount * (taxRate / 100);
+}
+
+function calculateFinalPrice(amount, applyDiscount, taxRate) {
+  const total = calculateTotalWithDiscount(amount, applyDiscount);
+  const tax = calculateTax(total, taxRate);
+  return total + tax;
+}
+        
+/*************************************************************************************/
+/*************************************************************************************/
+/*************************************************************************************/
+
+// 👍 PricingCalculator 클래스로 묶어 생성자들 통해 주입 받아 사용함
+class PricingCalculator {
+  constructor(amount, applyDiscount, taxRate) {
+    this.amount = amount;
+    this.applyDiscount = applyDiscount;
+    this.taxRate = taxRate;
+  }
+
+  calculateTotalWithDiscount() {
+    let total = this.amount;
+    if (this.applyDiscount) {
+      total *= 0.9;
+    }
+    return total;
+  }
+
+  calculateTax() {
+    return this.amount * (this.taxRate / 100);
+  }
+
+  calculateFinalPrice() {
+    const total = this.calculateTotalWithDiscount();
+    const tax = this.calculateTax();
+    return total + tax;
+  }
+}
+```
