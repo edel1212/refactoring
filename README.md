@@ -251,7 +251,75 @@ class Counter {
   - 데이터 뭉치가 앞에서 새로 만든 객체의 필드 중 일부만 사용하더라도 괜찮다.
   - 새 객체로 뽑아낸 필드가 두 개 이상이기만 해도 확실히 예전보다는 나이진 것이기 때문이다.
 
-### 기본형에 집착
+### 기본형 집착
 - 기본형식에 집착하여 주어진 문제에 맞는기초 타입(화폐,좌표,구간,날짜 등)을 직접 정의하지 않고 기본형을 사용하여 해결하려 하는 문제.
   - 금앨을 그냥 숫자형으로 계산하거나, 물리량을 계산할때 밀리미터나 인치 같은 단위를 뭇시하는 것
-- 해당 형식을를 제공해주는 `라이브러리`를 활용하거나 `직접 기능을 하는 Class`를 만들어 적용해 주자. 
+- 해당 형식을를 제공해주는 `라이브러리`를 활용하거나 `직접 기능을 하는 Class`를 만들어 적용해 주자.
+
+### 반복되는 switch문
+- 같은 조건으로 반복되는 switch문은 다형성을 통해 리팩토링이 가능하다.
+```javascipt
+// 👎 원래 코드
+class Shape {
+  constructor(type) {this.type = type;}
+
+  area() {
+    switch (this.type) {
+      case 'circle':
+        return Math.PI * this.radius * this.radius;
+      case 'rectangle':
+        return this.width * this.height;
+      // 등등 .. 
+    }// switch
+  }// area
+}
+
+// 원 class
+class Circle extends Shape {
+  constructor(radius) {
+    super('circle');
+    this.radius = radius;
+  }// constructor
+}
+
+// 직사각형 class
+class Rectangle extends Shape {
+  constructor(width, height) {
+    super('rectangle');
+    this.width = width;
+    this.height = height;
+  } // constructor
+}
+    
+/*************************************************************************************/
+/*************************************************************************************/
+ 
+ // 👍 전역 변수를 캡슐화 시킴
+class Shape {
+  constructor() {}
+  area() {}
+}
+
+class Circle extends Shape {
+  constructor(radius) {
+    super();
+    this.radius = radius;
+  }
+
+  area() {
+    return Math.PI * this.radius * this.radius;
+  }
+}
+
+class Rectangle extends Shape {
+  constructor(width, height) {
+    super();
+    this.width = width;
+    this.height = height;
+  }
+
+  area() {
+    return this.width * this.height;
+  }
+}
+ ``` 
