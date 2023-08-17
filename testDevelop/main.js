@@ -1,4 +1,5 @@
-{
+
+
     // Province에서 사용될 JSON 데이터를 생성하는 함수
     function sampleProvinceData() {
         return {
@@ -104,6 +105,8 @@
     
     }
 
-
-
-}
+    export {
+        sampleProvinceData,
+        Province,
+        Producer
+    };

@@ -4,6 +4,7 @@
   },
   "name": "testdevelop",
   "version": "1.0.0",
+  "type": "module",
   "main": "01-01Test.js",
   "dependencies": {
     "ansi-escapes": "^4.3.2",
