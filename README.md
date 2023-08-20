@@ -35,7 +35,9 @@
 - 예시
   - 유효 범위를 벗어나는 변수가 없을 때 : [링크](https://github.com/edel1212/refactoring/blob/main/refactoringSkills/extaractFunction/ex01.js)
     - 중첩 함수를 통해 해결함
-  - 지역 변수를 사용할 때 : 
+  - 지역 변수를 사용할 때 : [링크](https://github.com/edel1212/refactoring/blob/main/refactoringSkills/extaractFunction/ex02.js)
+    - 추출한 함수에 매개변수로 지역변수를 전달하여 해결함
+  - 지역 변수의 값을 변경 할 때
 <hr/>
 
 

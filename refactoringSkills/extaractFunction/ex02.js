@@ -2,13 +2,12 @@
 * 지역 변수를 사용할 때
 **/
 {
-    // 이전 👎
+    // 지역변수를 사용하지 않을 경우 👎
     function printOwing_BeforeVer(invoice) {
         let outstanding = 0;
 
-        console.log("--고객채무--");
+        printBanner();
 
-        // 미해결 채무(outstanding)를 계산한다.
         for (const o of invoice.order) {
             outstanding += o.amount;
         }
@@ -18,12 +17,20 @@
             today.getFullYear(),
             today.getMonth(),
             today.getDate() + 30
-          );
+        );
 
-        console.log(`고객명: ${invoice.customer}`);
-        console.log(`채무액: ${outstanding}`);
-        console.log(`마감일: ${invoice.dueDate.toLocaleDateString()}`);
+        printDetails();
+
+        function printDetails(){
+            console.log(`고객명: ${invoice.customer}`);
+            console.log(`채무액: ${outstanding}`);
+            console.log(`마감일: ${invoice.dueDate.toLocaleDateString()}`);
+        }
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
 
     // 리팩로팅 👍
     function printOwing_Refactoring(invoice) {
@@ -42,6 +49,11 @@
         printDetails(invoice, outstanding);
 
     }
+
+    /**********************************************/
+    /****************** 쪼개진 함수 ******************/
+    /**********************************************/
+
     // 배너 출력 로직
     function printBanner(){
         console.log("--고객채무--");
