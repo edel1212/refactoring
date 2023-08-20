@@ -37,7 +37,15 @@
     - 중첩 함수를 통해 해결함
   - 지역 변수를 사용할 때 : [링크](https://github.com/edel1212/refactoring/blob/main/refactoringSkills/extaractFunction/ex02.js)
     - 추출한 함수에 매개변수로 지역변수를 전달하여 해결함
-  - 지역 변수의 값을 변경 할 때
+  - 지역 변수의 값을 변경 할 때 : [링크](https://github.com/edel1212/refactoring/blob/main/refactoringSkills/extaractFunction/ex03.js)
+    - 함수를 추출 후 반환 값이 있는 `return`하는 함수로 만든 후 지역변수에 해당 값을 할당하여 해결함
+    - **값을 반환할 변수가 여러개 일 경우 ?**
+      - 각각 반환환하는 함수를 여러개로 만드는 방법
+      - 반환 값들을 한 레코드로 묶어서 반환해도 되지만 이러한 방법 보다는 `임시 변수를 질의함수로 바꾸기` 혹은 `변수를 쪼개기`를 사용하여 쪼개서 보내주는 것이 좋다.
+
+
+
+
 <hr/>
 
 
