@@ -80,6 +80,10 @@
   - 3 . 원본 표현식을 새로 만든 변수로 교체한다.
   - 4 . 테스트한다.
   - 5 . 표현식을 여러 곳에서 사용한다면 각각을 새로 만든 변수로 교체한다. 하나 교체할 떄마다 테스트 해준다.
+- 예시
+  - 기본 예시 : [링크](https://github.com/edel1212/refactoring/blob/main/refactoringSkills/inlineFunction/ex03.js)
+    - 복잡한 표현식을 지역변수를 사용하여 해결
+  - 클래스 안에서 : 
 
 <hr/>
 
