@@ -83,7 +83,8 @@
 - 예시
   - 기본 예시 : [링크](https://github.com/edel1212/refactoring/blob/main/refactoringSkills/inlineFunction/ex03.js)
     - 복잡한 표현식을 지역변수를 사용하여 해결
-  - 클래스 안에서 : 
+  - 클래스 안에서 : [링크](https://github.com/edel1212/refactoring/blob/main/refactoringSkills/inlineFunction/ex04.js)
+    - 생성자를 통해 받은 값을 사용하여 `get()`를 통해 함수를 생성
 
 <hr/>
 
