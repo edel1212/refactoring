@@ -61,6 +61,10 @@
   - 5 . 모든 교체가 끝난다면 원래 정의 되어 있는 함수를 삭제한다.
 - 예시
   - 함수로 추출되어 있지만 코드의 내용이 직관적인 상황 : [링크](https://github.com/edel1212/refactoring/blob/main/refactoringSkills/inlineFunction/ex01.js)
+    - 로직 자체를 단순히 잘라낸 후 함수내에 인라인 시켜서 해결
+  - 단순 잘라내기 붙여넣기로 해결하기 힘든 상황 : [링크](https://github.com/edel1212/refactoring/blob/main/refactoringSkills/inlineFunction/ex02.js)
+    - 상황이 복잡해진다면 한 문장씩 단계를 잘게 나눠서 처리해주자.
+    
 
 
 <hr/>
