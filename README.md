@@ -86,6 +86,14 @@
   - 클래스 안에서 : [링크](https://github.com/edel1212/refactoring/blob/main/refactoringSkills/inlineFunction/ex04.js)
     - 생성자를 통해 받은 값을 사용하여 `get()`를 통해 함수를 생성
 
+
+### 변수 인라인하기
+- 변수의 이름이 원래 표션식과 다를 바 없을 때 적용해 주면 좋다.
+- JSON 데이터를 추출만하여 변수를 만드는 무의미한 변수에 적용하면 된다.
+- 예시
+  - `let basPrice = anOrder.basePrice;  return  basePrice > 1_000` ===> `return anOrder.basePrice > 1_000;` 
+
+
 <hr/>
 
 
