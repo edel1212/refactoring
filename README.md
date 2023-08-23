@@ -210,10 +210,70 @@
   - 5 . 테스트한다.
   - 6 . 변수 값이 레코드라면 `레코드 캡슐화하기`를 적용할지 고려해본다.
 - 예시
-   ```javascript
+  ```javascript
   // 전역변수에 중요한 데이터가 담겨있다는 가정을 하자
   let defaultOwner = {fiestName:"유", lastName :"정호"}; 
-   ```
+  
+  // 해당 데이터를 참조하는 코드
+  spaceship.owner = defaultOwner;  
+  
+  // 해당 코드를 갱신 하는 코드
+  defaultOwner = {fiestName:"김", lastName :"덕배"};
+  
+  ////////////////////////////////////////////////////////
+  
+  // 💬 1 . 기본적인 캡슐화를 위해 가장 먼저 데이털르 읽고 쓰는 함수부터 정의한다.
+  function geDefaultOwner() {return defaultOwner;}
+  function setDefaultOnwer(arg) {defaultOwner = arg;}
+  
+  // 💬 2 . 그런 다음 위의에서의 defaultOwner를 참조 혹은 갱신 코드를 찾아서 방금 게터 함수를 호출하도록 변경해 주자
+  spaceship.owner = geDefaultOwner();
+  setDefaultOnwer({fiestName:"김", lastName :"덕배"});
+  
+  // 💬 3 . 모든 참조하는 부분을 수정했다면 변수의 가시 범위를 제한해주자. 그러면 미처 발견하지 못한 참조가 없는지 확인 또한 가능하고,
+  //        나중에 수정하는 코드에서도 이변수에 직접 접근하지 못다도록 만들 수 있다. [ ✅ 쉽게말해서 모듈화 해주라는 말임! ]
+  let defaultOwnerData = {fiestName:"마틴", lastName :"파울러"}
+  exprot function geDefaultOwner() {return defaultOwnerData;}
+  exprot function setDefaultOnwer(arg) {defaultOwnerData = arg;}
+  
+  // 💬 4 . 위의 구조를 캡슐화하면, 그 구조로의 접근이나 구조 자체를 다시 대입하는 행위는 제어할수 있다. 하지만 필드 값을 변경하는 일은 제어할수 없다.
+  const owner1 = defualtOwner();
+  assert.equal("파울러", owner1.lastName, "값 확인" );
+  const owner2 = defualtOwner();
+  owner2.lastName = "퍼거슨";
+  assert.equal("퍼거슨"", owner2.lastName, "값 확인2" );
+  /** 위와 같이 참조하는 부분만 캡슐화가 되어있다, 이정도로도 충분하짐나 변수 뿐아니라 분수의 내용까지 제어하고 싶다면 다른 방법을 사용해야한다. */
+  
+  // 💬 4 - 1 . 가장 간단한 방법 getter메서드에서 복제본을 반환하게하여 원본 데이터 수정을 막는다.
+  let defaultOwnerData = {fiestName:"마틴", lastName :"파울러"};
+  exprot function geDefaultOwner() { return Object.assign({}, defaultOwnerData); }
+  /** 특히 리스트에서 이 기법을 많이 적용함. 데이터의 복제본을 반환하면 클라이언트는 게터로 얻은 데이터를 변경 할 수 있지만 원본에는 영향을 주지 못한다. **/
+  
+  // 💬 4 - 2 . 가장 좋은 방법인 레코드 캡슐화하기
+  let defaultOwnerData = {fiestName:"마틴", lastName :"파울러"};
+  exprot function geDefaultOwner() {return new Person(defaultOwnerData);}
+  exprot function setDefaultOnwer(arg) {defaultOwnerData = arg;}
+  
+  class Person{
+    constructor(data){
+      this._lastName = data.lastName; 
+      this._firstName = data.firstName; 
+    }
+    get lastName() { return this._lastName };
+    get firstName() { return this._firstName };
+  }
+  /**
+    위와같이 class를 통해 적용하면 defaultOwnerData의 속성을 다시 대입하는 연산은 모두 무시된다. ==> Class 객체가 반환 되기 때문이다.
+    - 이처럼 class를 통해 접근 및 수정을 하는 방법이 가장 좋은 방법이다.
+    - 복제본을 사용하는 방법을 사용것도 좋은 방법이며 이러한 복제가 성능에 주는 영향은 대체로 미미하기 떄문에 성능에 신경을 쓸필요가 없고 오히려
+      이와 같이 복제본을 사요하지 않고 원본을 수정하는 로직은 디버깅이 어렵고 시간도 오래걸리는 위험이 크다.
+    - ✅ 하지만 명심해야하는 점은 앞에서 설명한 복제본 만들기와 클래스로 감싸는 방싱은 레코드 구조에서 깊이가 1인 속성들까지만 효과가 있다.
+         더 깊이 들어가면 복제본과 객체 래핑 단계가 더 늘어나게 된다. ==> 데이터의 구조가 복잡해지면 코드가 오히려 복잡해진다는 말임 
+                                                           ex) {key : {key:value}} 와 같은 중첩 구조를 말함
+  **/
+  
+  
+  ```
 
 
 <hr/>
