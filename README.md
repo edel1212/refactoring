@@ -366,8 +366,95 @@
   }
   ```
 
-### 여러 함수 를 클래스로 묶기
-
+### 여러 함수를 클래스로 묶기
+- 클래스는 데이터와 함수를 하나의 공유 환경으로 묶은 후 다른 프로개름 요소와 어우러질 수 있도록 그 중의 일부를 외부에서 제공해준다.
+- 프로그램의 다른 부분에서 데이터를 갱신할 가능성이 꽤 있을 때는 클래스로 묶어두면 큰 도움이 된다.
+- 공통 데이터를 중심으로 긴밀하게 엮여 작동하는 함수 무리를 발견하면 클래스로 묶어 주도록 노력해보자.
+  - 각 함수에 전달 되는 인수를 줄여 객채 안에서 함수 호출을 간결하게 할 수 있는 장점이있다.
+  - 객체 시스템의 다른 부분에 전달하기 위한 참조를 제공해준다.
+- 이미 만들어진 함수들을 재구성할 때는 물론 새로 만든 클래스와 관렪하여 놓친 연찬을 찾아서 새 클래스의 메서드로 뽑아내는 데도 간편해진다.
+- 클래스로 묶었을 때 의 두드러진 장점은 클라이언트가 객체의 핵심 데이터를 변경할 수 있고, 파생 객체들을 일관되게 관리 할 수 있다는 것이다.
+  - 위와 같은 함수들은 중첨 함수 형태로 묶어도 되지만 해당 방법보다는 `클래스로 묶어주는 것이` 더욱 관리하기 편함!!
+  - 외부에 공개할 함수가 여러개일 경우에도 `클래스`의 경우가 더욱 구현 및 관리하기가 편할 것이다.
+- 클래스를 지원하지 않는 언어를 사용할 떄는 같은 기능을 `함수를 객체처럼 패턴`을 이용해서 구현하기도한다.
+  - javascript에서 class가 없을 당시 이렇게 사용했음
+- 절차
+  - 1 . 함수들이 공유하는 공통 데이터 레코드를 캡슐화 한다.
+    - 공통 데이터가 레코드 구조로 묶여 있지 않다면 먼저 `매개변수 객체 만들기`로 데이터를 하나로 묶는 레코드를 만든다.
+  - 2 . 공통 레코드를 사용하는 함수 각각을 새 클래스로 옮긴다 `(함수 옮기기)`
+  - 3 . 데이터를 조작하는 로직들은 `함수로 추출`해서 새 클래스로 옮긴다.
+- 예시
+  ```javascipt
+  /** 정부에처 차를 수돗물처럼 제공하는 프로그램 예시 사람들은 매달 차 계기량을 읽어서 측정값을 기록함 */
+  
+  // 차량 계기량 측정값
+  reading = {customer : "ivan", quantity : 10 , month :  5 , year : 2017};
+  
+  /** 문제의 코드 같은 로직의 함수가 중복되어 사용되고 있다👎 **/
+  // 클라이언트1
+  const aReading = acquiredRading();
+  const baseChage = baseRate(aReading.monht, aReading.year) * aReading.quantity;    // 기본 요금 계산
+  
+  // 클라이언트2
+  const aReading = acquiredRading();
+  const base = baseRate(aReading.monht, aReading.year) * aReading.quantity;         // 기본 요금 계산
+  const taxableCharge = Math.max(0, base - taxThreshold(aReading.year));            // 차 소비량만큼 면세
+  
+  // 클라이언트3
+  const aReading = acquiredRading();
+  const basicChargeAmount = calcualteBaseChage(aReading);
+  
+  function calculateBaseCharge(aReading){ // 기본 요금 계산 함수
+    return baseRate(aReading.monht, aReading.year) * aReading.quantity;
+  }
+   
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+   
+  /** 리팩토링 👍 **/
+  //  레코드를 클래스로 변환하기위해 캡슐화를 진행
+  class Reading{
+    constructor(data){
+      this._customer = data.customer;
+      this._quantity = data.quantity;
+      this._month    = data.month;
+      this._year     = data.year;
+    }
+    get customer(){return this._customer;}
+    get quantity(){return this._quantity;}
+    get month(){return this._month;}
+    get year(){return this._year;}
+    
+    // 👉 함수 이름을 원하는대로 바꿔주자 "함수 이름 바꾸기"
+    get baseCharge(){
+      return baseRate(this._monht, this._year) * this._quantity;
+    }
+  
+    // 👉 클라이언트2에서 사용하던 불필요하게 긴 로직을 같은 레코드를 쓰는 해당 클래스에서 메서드로 만들어줌
+    get taxableCharge(){
+      return Math.max(0, this.baseChage - taxThreshold(this._year))
+    }
+  
+  }
+  
+  // 클라이언트 3
+  const rawReading = acquiredRading();
+  const aReading   = new Reading(rawReading);
+  // 💬 아래와 같이 이름을 바꾸고 나면 해당 baseCharge 값이 "필드 값" 인지 "계산된 값(메서드 호출 값)"인지 구분할수 없다
+  //    이는 "단일 접근 원칙"을 따르므로 권장하는 방식이다. 👍
+  const basicChargeAmount = aReading.baseCharge;
+  
+  // 클라이언트 1
+  const rawReading = acquiredRading();
+  const aReading   = new Reading(rawReading);
+  const baseCharge = aReading.baseCharge;
+  
+  // 클라이언트2
+  const rawReading    = acquiredRading();
+  const aReading      = new Reading(rawReading);
+  const taxableCharge =  aReading.taxableCharge;
+  
+  ```
 
 <hr/>
 
