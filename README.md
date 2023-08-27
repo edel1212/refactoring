@@ -528,6 +528,58 @@
   
   ```
 
+### 단계 쪼개기
+- 서로 다른 두대상을 한꺼번에 다루는 코드를 발견하면 가각을 별 모듈로 나누는 방법을 모색하자
+  - 수정이 생겼을 경우 두 대상을 동시에 생각할 필요 없이 하나에만 집중할수 있다.
+- 모듈이 잘분리되어있다면 다른 모듈의 상세 내용은 전혀 기억하지 못해도 원하는대로 수정을 할 수 있다.
+- 가장 간편한 방법 연이은 두단계로 쪼개는 것이다.
+  - ex) 
+    - 입력처리 로직에 적합하지 않은 형태로 들어오는 파라미터를 다루기 쉬운형태로 파싱하는 경우
+    - 프로그램이 컴파일 되는 경우 -> 텍스트를 토큰화하고 토큰을 파싱 -> 구문트리 생성 -> 구문트리 변환 -> 목적 코드를 생성
+- 다른 단계로 볼 수 있는 코드 영열득이 마침 서초 다른 데이터와 함수를 사용한다면 `단계 쪼개기`에 적합한 상태라 보자
+- 예시 `( 절차의 설명이 불친절하여 스킵함 )`
+  ```javascript
+  /** 삼품의 결제 금액을 계싼하는 코드 */
+  
+  /** 계산이 두단계로 이뤄져 있지만 한곳에처 처리중임👎 **/
+  function priceOrder(product, quantity, shoppingMethod) {
+    // 상품 가격 계산
+    const basePrice = product.basePrice * quantity;
+    const discount = Math.max(quantity - product.discountThreshold, 0) * product.basePrice * product.discountRate;
+  
+    // 배송비 관련 계산 
+    const shippingPerCase = (basePrice > shippingMethod.discountThreshold) ? shippingMethod.discountedFee :                 shippingMethod.feePerCase;
+    const shippingCost = quantity * shippingPerCase;
+    const price = basePrice - discount + shippingCost;
+  
+    return price;
+  }
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+   
+  /** 리팩토링 (상품 가격과 배송비 계산을 두 단계로 나눔) 👍 **/
+  function priceOrder(product, quantity, shoppingMethod) {
+    // ✅ 계산 로직을 생성하며 중간 데이터를 만들어준다 ( Object 형태 )
+    const priceData = calculatePricingData(product, quantity);
+    // ✅ 배송비 계산 로직
+    return applyShipping(priceData, shippingMethod);
+  }
+  
+  // 👉 중간 데이터
+  function calculatePricingData(product, quantity) {
+    const basePrice = product.basePrice * quantity;
+    const discount = Math.max(quantity - product.discountThreshold, 0) * product.basePrice * product.discountRate;
+    return {basePrice: basePrice, quantity: quantity, discount: discount};
+  }
+  // 👉 배송비 계산
+  function applyShipping(priceData, shippingMethod) {
+    const shippingPerCase = (priceData.basePrice) > shippingMethod.discountThreshold) ? shippingMethod.discountedFee : shippingMethod.feePerCase;
+    const shippingCost = priceData.quantity * shippingPerCase;
+    return priceData.basePrice - priceData.discount + shippingCost;
+  }
+  ```
+
 <hr/>
 
 
