@@ -462,6 +462,7 @@
     - 모아두면 검색과 갱신을 일관된 장소에서 처리할 수 있으며 로직 중복을 막을 수 있는 장점이 있음
 - `변환 함수`는 원본 데이터를 입력받아 필요한 정보를 도출한뒤 각각 출력 데이터를 필드에 넣어 반환 하는 기능을 한다.
   - 도출과정을 검토할 일이 생셨을 때 해당 함수만 파악하면 해결이 가능한 장점
+- 가장 중요한 포인트는 `원본 데이터의 데이터 일관성을 유지`해주는 것이다.
 - `여러 함수를 변환 함수로 묶기`와 비슷한 리팩터링 기술로는 `여러 함수를 클래스로 묶기`가 있다.
   - 하지만 둘사이의 중요한 차이가 하나 있다.
     - 원본 데이터가 코드 안에서 갱신될 떄는 `클래스로 묶는 편이` 훤씬 좋다.
@@ -475,6 +476,55 @@
   - 4 . 나머지 관련 함수들도 위의 과정에 따라서 처리해주자.
 - 예시
   ```javascript
+  /** 정부에처 차를 수돗물처럼 제공하는 프로그램 예시 사람들은 매달 차 계기량을 읽어서 측정값을 기록함 */
+  
+  // 차량 계기량 측정값
+  reading = {customer : "ivan", quantity : 10 , month :  5 , year : 2017};
+  
+  /** 문제의 코드 같은 로직의 함수가 중복되어 사용되고 있다👎 **/
+  // 클라이언트1
+  const aReading = acquiredRading();
+  const baseChage = baseRate(aReading.monht, aReading.year) * aReading.quantity;    // 기본 요금 계산
+  
+  // 클라이언트2
+  const aReading = acquiredRading();
+  const base = baseRate(aReading.monht, aReading.year) * aReading.quantity;         // 기본 요금 계산
+  const taxableCharge = Math.max(0, base - taxThreshold(aReading.year));            // 차 소비량만큼 면세
+  
+  // 클라이언트3
+  const aReading = acquiredRading();
+  const basicChargeAmount = calcualteBaseChage(aReading);
+  
+  function calculateBaseCharge(aReading){ // 기본 요금 계산 함수
+    return baseRate(aReading.monht, aReading.year) * aReading.quantity;
+  }
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+   
+  /** 리팩토링 👍 **/
+  
+  //  👉 입력 객체를 그대로 복사해 반환하는 변환 함수
+  function enrichReading(original){
+    // ✅ lodash라는 외부 라이브러리의 cloneDeep(obj)이라는 메서드를 사용하여 깊은 복사를 사용
+    const result      = _.clonDeep(original);
+    /**
+      ✅ calculataBaseCharge를 추가하는 정보를 해당 메서드에서 한번에 처리 해서 반환 해줌
+         - 해당 방법으로 처리하므로 원본 데이터가 변경하지 않고 반환이 가능함
+         - 변환된 레코드를 사용해야한다는 의도를 명확하게 표현도 가능해짐
+    */
+    result.baseCharge   = calculataBaseCharge(aReading);
+    // ✅ 세금 계산 로직 또한 위와 같이 추가
+    reult.taxableCharge =  Math.max(0, result.baseCharge - taxThreshold(result.year));
+    return result;
+  }
+  
+  // 👉 변경하려는 계산 로직중 하나를 골라 계산 로지겡 측정값을 전당하기 전에 부가정볼르 덧붙이도록 수정함
+  const rawReading = acquiredRading();
+  const aReading   = enrichReading(rawReading);
+  // ✅ 중첩함수를 사용하므로써 의도를 파악하는데 더욱 쉬워짐
+  const basicChargeAmount = aReading.baseCharge; 
+  const taxableCharge     = aReading.taxableCharge;
   
   ```
 
