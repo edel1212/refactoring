@@ -624,7 +624,7 @@
   - 중첩된 레코드 캡슐화하기
   ```javascipt
   // 여러겹이 중첩된 레코드 - 중첩 정도가 심할수록 읽거나 쓸 떄 데이터 구조안으로 더 깊숙히 들어가야함
-  const user = {
+  const customerData = {
    1994: {
     name: "seunghwan",
     id: "1994",
@@ -654,6 +654,47 @@
     },
    },
   };
+  
+  // 쓰기 예
+  customerData[customerID].usages[year][month] = amount;
+  
+  // 읽기 예
+  function compareUsage(customerID, laterYear, month){
+    const later = customerData[customerID].usage[lateYear][month];
+    const earlier = customerData[customerID].usage[lateYear - 1][month];
+    return {laterAmount : later, change : later - earlier};
+  }
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+   
+  /** 리팩토링 캡슐화 👍 **/
+  class CustomerData{
+    constructor(data){
+      this._data = data;
+    }
+  
+    // 내부 데이터 수정
+    setUsage(customerID, year, month, amount){
+      this._data[customerID].usages[year][month]
+    }
+    
+    // 데이터 복사본을 반환함 
+    get rawData(){
+      // 👉 깊은 복사
+      return _.cloneDeep(this.data);
+    }
+  
+    // 사용량 반환
+    usage(customerID, year, month){
+      return this._data[customerID].usages[year][month];
+    }
+  }
+  
+  function getCustomerData() {return constoerData;}
+  function setRawDataOfCustomers(arg) {customerData = new CustomerData(arg);}
+  function getRawDataOfCustomers(){ return customerData.rawData; }
+    
   ```
 <hr/>
 
