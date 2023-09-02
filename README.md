@@ -708,14 +708,77 @@
 - 예시
   ```javascript
   /** 수업 목록을 필드로 지니고 있는 Person 클래스 */
-  Person{
+  Class Person {
     constructor(name){
       this.name = name;
       this._courses = [];
     }  
     get name() {return this.name;}
-    get courses() {return this._courses }
+    get courses() {return this._courses; }
+    set courses(aList) {this._courses = aList;}
   }
+  
+  Class Course{
+    constructor(name, isAdvanced){
+      this._name = name;
+      this._isAdvanced = isAdcanced;    
+    }
+    get name() {return this._name;}
+    get isAdvanced() {return this._isadvanced;}
+  }
+  
+  // 수업 정보를 얻음
+  // 캡슐화는 되어 있지만 세터를 이용해 수업 컬렉션을 통쨰로 설정한다면 누구든 컬레션을 수정할 수 있게 되는 문제가 있음
+  let numAdvancedCourses = aPerson.courses.filter(c=> c.isAdvanced).lenght; 
+  
+  // 마음대로 컬레션 데이터 변경 
+  const basicCourseNames = readBaiscCourseNames(fileName);
+  aPserson.courses = basicCourseNames.map(name => newCourse(name, false));
+  
+  // 마음대로 컬레션 데이터 변경2
+  for(const name of readBasicCourseName(fileName)){
+    aPerson.courses.push(new Course(name, false))
+  }
+  
+  /**
+    * 위와 같은은 방법을 목륵을 갱신하면 Person클래스가 더는 컬렉션을 제어할수 없으니 캡슐화가 꺠지게 된다.  
+    *  - 필드를 참조하는 과정만 캡슐화 헀을 뿐 필드 내용은 캡슐화하지 않은게 원인임.
+  */
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+   
+  /** 리팩토링 캡슐화 👍 **/
+  
+  // 다른 언어들은 컬렉션을 수정하는 연산들이 기본적으로 복제본을 만들어 처리하짐나 자바스크립트는 배열을 정렬할 떄 원본을 수정한다.
+  // 컬렉션 관리를 책임지는 클래스라면 항상 복제몬을 제공하여 사용하자!! 
+  
+  Class Person {
+    constructor(name){
+      this.name = name;
+      this._courses = [];
+    }  
+    get name() {return this.name;}
+    // 💬 복제본 생성 
+    get courses() {return this._courses.slice(); }
+    // 💬 복제본 생성
+    set courses(aList) {this._courses = aList.slice();}
+    
+    addCourse(aCourse){
+      this._courses.push(aCourse);
+    }
+    removeCourse(aCourse, fnIfAbsent => {throw new RangeError();}){
+      const index = this._courses.indexOf(aCourse) 
+      if(index === -1) fnIfAbsent();
+      else this._courses.splice(index, 1);
+    }
+  }
+  
+  // 추가시 컬렉션을 건드는 것이 아닌 함수를 사용
+  for(const name of readBasicCourseName(fileName)){
+    aPerson.addCourse(new Course(name, false))
+  }
+  
   ```
 
 
