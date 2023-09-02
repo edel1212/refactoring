@@ -781,6 +781,76 @@
   
   ```
 
+### 기본형을 객체로 바꾸기
+- 단순한 출력 이상의 기능이 필요해지는 순간 그데이털르 표현하는 전용 클래스를 정의해주자.
+  - 시작은 기본형 데이터를 단순히 감싼것이라 큰 효과를 느낄 수 없지만 특별한 동작이 필요해지면 해당 클래스에 동작을 추가하면 되니 프로그램이 커질수록 점점 편해진다.
+    - 대단해 보이지 않아 보여도 코드베이스에 미치는 효과는 놀라울 만큼 크다.
+    - 여거 가지 리팩터링 중에서도 가장 유용한 방법으로 손꼽힌다.
+- 예시
+  ```javascript
+  class Order{
+    constructor(data){
+      this.priority = data.priority;
+      // 나머지 코드 생량..
+    }
+  }
+  
+  // 클라이언트에서 사용
+  let gightPriorityCount = order.filter(o => "hight" === o.priority || "rush" === o.priority).length;
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+   
+  /** 리팩토링 캡슐화 👍 **/
+  
+  // 우선 순위 속성을 표한하는 값 클래스 생성
+  class Priority{
+    constructor(value){ 
+      this._value = value;
+    }
+    // 💬 게터와 같은 기능을함 취향에 맞춰서 사용하자
+    toString() {return this._value;}
+  }
+  
+  class Order{
+    constructor(priority){
+      this._priority = priority;
+      // 나머지 코드 생량..
+    }
+  
+    get priority() { return this._priority; }
+    set priority(aString) { this._priority = new Priority(aString) }
+  }
+  
+  // 클라이언트에서 사용 
+  let gightPriorityCount = order.filter(o => "hight" === o.priority.toString() 
+                                          || "rush"  === o.priority.toString()).length;
+  
+  
+  /** 상위 리펙토링에 추가적인 로직이 있을 경우 추가 예시  **/
+  
+  class Priority {
+    constructor(value) {
+      if (value instanceof Priority) return value;
+      if (Priority.legalValues().includes(value)) {
+        this._value = value;
+      } else {
+        throw new Error(`[${value}] is invalid for [Priority]`);
+      }
+    }// constructor
+  
+    get value() {  return this._value; }
+  
+    static legalValues() { return ["low", "normal", "hight", "rush"]; }
+  
+    get _index() { return Priority.legalValues().findIndex((s) => s === this.value); }
+  
+    higherThan(other) { return this._index > other._index; }
+  }
+  
+  // 클라이언트의 입장에서 사용되는 인터페이스를 좀 더 추상화해보자.
+  hightPriorityCount = orders.filter((o) => o.priority.higherThan(new Priority("normal"))).length;
+  ```
 
 <hr/>
 
