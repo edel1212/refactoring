@@ -863,6 +863,15 @@
   - 클래스는 추출할 메서드들에 공유 컨텍스트를 제공하기 때문이다.
 - 임시 변수를 질의 함수로 바꾼다고 무조건 좋은것은 아니다.
   - 옛날주소 처럼 스냅숏 용도로 쓰이는 변수에는 사용하면 오히려 좋지 않기 떄문이다.
+- 예시
+  ```javascript
+  class Order{
+    constructor(quantity, item){
+      this._quantity = quantity;
+      this._item = item;
+    }
+  }
+  ```
 
 <hr/>
 
@@ -916,6 +925,8 @@ class ComedyCalculator extends PerformanceCalculator {
     }
     result += 300 * this.performance.audience;
     return result;
+    
+    
   }
 }
 
