@@ -933,6 +933,8 @@ const newEnglanders = someCustomers.filter((c) =>
       if (basePrice > 1_000) discount -= 0.03;
       return basePrice * discountFactor;
     }
+
+    //
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
