@@ -938,7 +938,7 @@ const newEnglanders = someCustomers.filter((c) =>
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /** 리팩토링 캡슐화 👍 **/
+  /** 리팩토링 임시 변수를 질의 함수로 바꾸기 👍 **/
   class Order{
     constructor(quantity, item) {
       this._quantity = quantity;
@@ -963,6 +963,62 @@ const newEnglanders = someCustomers.filter((c) =>
     }
   }
   ```
+
+### 클래스 추출하기
+- 클래스란 반드시 명확하게 추상화하고 소수의 주어진 역할만 처리해야한다.
+  - 이러한 규칙이 실무에서는  몇 가지 연산을 추가하고 데이터도 보강하면서 점점 클래스가 비대해지는 문제가 있다.
+    - 역할이 갈수록 많아지고 새끼를 치면서 클래스가 굉장히 복잡해지는데 이렇게 계속 진행하다보면 **전자렌지로 바짝 익힌 음식처럼 딱딱해지고 만다.**
+- 클래스는 메서드와 데이터가 너무 많으면 이해하기 쉽지 않으니 적절히 분리하는 것이 좋다.
+  - 일부 `데이터와 메서드를 따로 묶을 수 있다면` 어서 분리해야한다는 신호이니 꼭 분리하는 습관을 들이자.
+  - 함께 변경되는 일이 만헉나 서로 의존하는 데이터들도 분리해줘야한다.
+  - 제거해도 다른 픽드나 메서드 들이 논리적으로 문제가 없다면 분리해주자
+- 작은 일부 기능만을 위해 서브클래스를 만들거나 확장해야 할 기능이 무엇이냐에 따라 서브클래스르 만드는 방식도 달라진다면 클래스를 나눠야한다는 신호이다. 
+
+- 예시
+
+  ```javascript
+  class Person{
+    get name ()             {return this._name;}
+    set name (arg)          {this._name = age;}
+    get telephoneNumber()   {return `(${this.officeAreaCode}) ${this.officeNumber}`;}
+    get officeAreaCode()    {return this.officeAreaCode;}
+    set officeAreaCode(arg) {this.officeAreaCode = arg;} 
+    get officeNumber()      {return this._officeNumber;}
+    set officeNumber(arg)   {this.officeNumber = arg;}
+  }
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /** 리팩토링 클래스 추출 👍 **/
+  
+  // 👉 전화번호 관련 동작을 별도로 클래스로 추출
+  class TelephoneNumber{
+    get areaCode()    {return this._areaCode;}
+    set areaCode(arg) {this._areaCode = arg;}
+    get number()      {return this._number;}
+    set number(arg)   {this._number   = arg;}  
+    toString() {return `(${this.areaCode}) ${this.number}`}
+  }
+  
+  // 👉 기존 Person에서 사용중이던 함수를 TelephoneNumber 클래스를 받아와 사용
+  class Person {
+    constructor(){
+      // 💬 TelephoneNumber를 인스턴스로 생성
+      this.telephoneNumber = new TelephoneNumber();
+    }
+    get name ()             {return this._name;}
+    set name (arg)          {this._name = age;}
+    // ⭐️ telephoneNumber기준으로 분리한 class로 처리함 
+    get telephoneNumber()   {return this.telephoneNumber.toString();}
+    get officeAreaCode()    {return this.telephoneNumber.areaCode;}
+    set officeAreaCode(arg) {this.telephoneNumber.areaCode = arg;} 
+    get officeNumber()      {return this.telephoneNumber.number;}
+    set officeNumber(arg)   {this.telephoneNumber.number = arg;}
+  }
+  
+  ```
+
 
 <hr/>
 
