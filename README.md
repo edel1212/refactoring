@@ -933,14 +933,35 @@ const newEnglanders = someCustomers.filter((c) =>
       if (basePrice > 1_000) discount -= 0.03;
       return basePrice * discountFactor;
     }
-
-    //
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /** 리팩토링 캡슐화 👍 **/
+  class Order{
+    constructor(quantity, item) {
+      this._quantity = quantity;
+      this._item = item;
+    }
+    
+    // 👉 base값을 함수로 추출
+    get basePrice(){
+      return this._quantity * this._item.price;
+    }
+    
+    // 👉 discount값을 함수로 추출
+    get discountFactor(){
+      let dicountFactor = 0.98;
+      if (basePrice > 1_000) discount -= 0.03;
+      return dicountFactor;
+    }
+    
+    // 👉 두 값을 조합하는 함수로 변경 
+    get price(){
+      return this.basePrice * this.discountFactor;   
+    }
+  }
   ```
 
 <hr/>
