@@ -1027,6 +1027,51 @@ const newEnglanders = someCustomers.filter((c) =>
 - ✅ 예시 코드는 위의 코드를 반대로 돌리면 되기에 생갹한다!
 
 
+### 위임 숨기기
+- 캡슐화는 모듈 셀계를 제대로 하는 핵심이다.
+- 캡슐화가 잘 되어 있다면 무언가를 변경해야 할 때 함께 고려해야 할 모듈 수가 적어져서 코드를 변경하기 훨씬 쉬워진다.
+- 쉽게 설명하자면 client에서 사용하는 정보를 최대한 숨겨서 보여주게 끔하는 것 
+  - `manager = aPerson.department.manager` => `manager = aPserson.manager` 와 같은 형식으로
+- 예시
+
+  ```javascript
+  class Person{
+    constructor(){
+      this._name = name;
+    }
+    get name() {return this._name;}
+    get department() {return this._department}
+    set department(arg) {this._department = arg;}
+  }
+  
+  class Department{
+    get cargeCode() {return this._department;}
+    set cargeCode(arg) {this._department = arg;}
+    get manager() {return this._manager;}
+    set manager(arg) {this._manager = arg}
+  }
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /** 위임 숨기기 👍 **/
+  
+  class Person{
+    constructor(){
+      this._name = name;
+    }
+    get name() {return this._name;}
+    get department() {return this._department}
+    set department(arg) {this._department = arg;}
+    // 👉 manager를 가져오는 부분을 굳이 위임을 하지 않고 해당 class 내부에서 함수를 만들어 처리
+    get manager(){ return this._department.manager }
+  }
+  
+  const aPerson = new Person();
+  // .. 중간 코드 생략
+  console.log(aPerson.manager); // 위임을 숨김으로 써 department를 중간에 쓸 필요가 없음 
+  ```
+
 <hr/>
 
 ## 리팩토링이 필요한 순간
