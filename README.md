@@ -939,180 +939,325 @@ const newEnglanders = someCustomers.filter((c) =>
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /** 리팩토링 임시 변수를 질의 함수로 바꾸기 👍 **/
-  class Order{
+  class Order {
     constructor(quantity, item) {
       this._quantity = quantity;
       this._item = item;
     }
-    
+
     // 👉 base값을 함수로 추출
-    get basePrice(){
+    get basePrice() {
       return this._quantity * this._item.price;
     }
-    
+
     // 👉 discount값을 함수로 추출
-    get discountFactor(){
+    get discountFactor() {
       let dicountFactor = 0.98;
       if (basePrice > 1_000) discount -= 0.03;
       return dicountFactor;
     }
-    
-    // 👉 두 값을 조합하는 함수로 변경 
-    get price(){
-      return this.basePrice * this.discountFactor;   
+
+    // 👉 두 값을 조합하는 함수로 변경
+    get price() {
+      return this.basePrice * this.discountFactor;
     }
   }
   ```
 
 ### 클래스 추출하기
+
 - 클래스란 반드시 명확하게 추상화하고 소수의 주어진 역할만 처리해야한다.
-  - 이러한 규칙이 실무에서는  몇 가지 연산을 추가하고 데이터도 보강하면서 점점 클래스가 비대해지는 문제가 있다.
+  - 이러한 규칙이 실무에서는 몇 가지 연산을 추가하고 데이터도 보강하면서 점점 클래스가 비대해지는 문제가 있다.
     - 역할이 갈수록 많아지고 새끼를 치면서 클래스가 굉장히 복잡해지는데 이렇게 계속 진행하다보면 **전자렌지로 바짝 익힌 음식처럼 딱딱해지고 만다.**
 - 클래스는 메서드와 데이터가 너무 많으면 이해하기 쉽지 않으니 적절히 분리하는 것이 좋다.
   - 일부 `데이터와 메서드를 따로 묶을 수 있다면` 어서 분리해야한다는 신호이니 꼭 분리하는 습관을 들이자.
   - 함께 변경되는 일이 만헉나 서로 의존하는 데이터들도 분리해줘야한다.
   - 제거해도 다른 픽드나 메서드 들이 논리적으로 문제가 없다면 분리해주자
-- 작은 일부 기능만을 위해 서브클래스를 만들거나 확장해야 할 기능이 무엇이냐에 따라 서브클래스르 만드는 방식도 달라진다면 클래스를 나눠야한다는 신호이다. 
+- 작은 일부 기능만을 위해 서브클래스를 만들거나 확장해야 할 기능이 무엇이냐에 따라 서브클래스르 만드는 방식도 달라진다면 클래스를 나눠야한다는 신호이다.
 
 - 예시
 
   ```javascript
-  class Person{
-    get name ()             {return this._name;}
-    set name (arg)          {this._name = age;}
-    get telephoneNumber()   {return `(${this.officeAreaCode}) ${this.officeNumber}`;}
-    get officeAreaCode()    {return this.officeAreaCode;}
-    set officeAreaCode(arg) {this.officeAreaCode = arg;} 
-    get officeNumber()      {return this._officeNumber;}
-    set officeNumber(arg)   {this.officeNumber = arg;}
+  class Person {
+    get name() {
+      return this._name;
+    }
+    set name(arg) {
+      this._name = age;
+    }
+    get telephoneNumber() {
+      return `(${this.officeAreaCode}) ${this.officeNumber}`;
+    }
+    get officeAreaCode() {
+      return this.officeAreaCode;
+    }
+    set officeAreaCode(arg) {
+      this.officeAreaCode = arg;
+    }
+    get officeNumber() {
+      return this._officeNumber;
+    }
+    set officeNumber(arg) {
+      this.officeNumber = arg;
+    }
   }
-  
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /** 리팩토링 클래스 추출 👍 **/
-  
+
   // 👉 전화번호 관련 동작을 별도로 클래스로 추출
-  class TelephoneNumber{
-    get areaCode()    {return this._areaCode;}
-    set areaCode(arg) {this._areaCode = arg;}
-    get number()      {return this._number;}
-    set number(arg)   {this._number   = arg;}  
-    toString() {return `(${this.areaCode}) ${this.number}`}
+  class TelephoneNumber {
+    get areaCode() {
+      return this._areaCode;
+    }
+    set areaCode(arg) {
+      this._areaCode = arg;
+    }
+    get number() {
+      return this._number;
+    }
+    set number(arg) {
+      this._number = arg;
+    }
+    toString() {
+      return `(${this.areaCode}) ${this.number}`;
+    }
   }
-  
+
   // 👉 기존 Person에서 사용중이던 함수를 TelephoneNumber 클래스를 받아와 사용
   class Person {
-    constructor(){
+    constructor() {
       // 💬 TelephoneNumber를 인스턴스로 생성
       this.telephoneNumber = new TelephoneNumber();
     }
-    get name ()             {return this._name;}
-    set name (arg)          {this._name = age;}
-    // ⭐️ telephoneNumber기준으로 분리한 class로 처리함 
-    get telephoneNumber()   {return this.telephoneNumber.toString();}
-    get officeAreaCode()    {return this.telephoneNumber.areaCode;}
-    set officeAreaCode(arg) {this.telephoneNumber.areaCode = arg;} 
-    get officeNumber()      {return this.telephoneNumber.number;}
-    set officeNumber(arg)   {this.telephoneNumber.number = arg;}
+    get name() {
+      return this._name;
+    }
+    set name(arg) {
+      this._name = age;
+    }
+    // ⭐️ telephoneNumber기준으로 분리한 class로 처리함
+    get telephoneNumber() {
+      return this.telephoneNumber.toString();
+    }
+    get officeAreaCode() {
+      return this.telephoneNumber.areaCode;
+    }
+    set officeAreaCode(arg) {
+      this.telephoneNumber.areaCode = arg;
+    }
+    get officeNumber() {
+      return this.telephoneNumber.number;
+    }
+    set officeNumber(arg) {
+      this.telephoneNumber.number = arg;
+    }
   }
-  
   ```
 
 ### 클래스 인라인하기
+
 - `클래스 추출하기`를 거꾸로 돌리는 리팩토링이다. 해당 방법을 반대로 하면 된다.
 - 더 이상 제 역할을 하지못하고 그대로 두면 안 되는 클래스를 인라인 해준다.
 - 역할을 옮기는 리팩터링을 한 후 특정 클래스에 남은 역할이 거의 없을 때 사용한다
   - 해당 경우에는 해당 클래스를 가장 많이 사용하는 클래스에 흡수 시켜준다.
 - ✅ 예시 코드는 `함수 추출하기` 리팩토링 방식을 반대로 돌리면 되기에 생략한다!
 
-
 ### 위임 숨기기
+
 - 캡슐화는 모듈 셀계를 제대로 하는 핵심이다.
 - 캡슐화가 잘 되어 있다면 무언가를 변경해야 할 때 함께 고려해야 할 모듈 수가 적어져서 코드를 변경하기 훨씬 쉬워진다.
-- 쉽게 설명하자면 client에서 사용하는 정보를 최대한 숨겨서 보여주게 끔하는 것 
+- 쉽게 설명하자면 client에서 사용하는 정보를 최대한 숨겨서 보여주게 끔하는 것
   - `manager = aPerson.department.manager` => `manager = aPserson.manager` 와 같은 형식으로
 - 예시
 
   ```javascript
-  class Person{
-    constructor(){
+  class Person {
+    constructor() {
       this._name = name;
     }
-    get name() {return this._name;}
-    get department() {return this._department}
-    set department(arg) {this._department = arg;}
+    get name() {
+      return this._name;
+    }
+    get department() {
+      return this._department;
+    }
+    set department(arg) {
+      this._department = arg;
+    }
   }
-  
-  class Department{
-    get cargeCode() {return this._department;}
-    set cargeCode(arg) {this._department = arg;}
-    get manager() {return this._manager;}
-    set manager(arg) {this._manager = arg}
+
+  class Department {
+    get cargeCode() {
+      return this._department;
+    }
+    set cargeCode(arg) {
+      this._department = arg;
+    }
+    get manager() {
+      return this._manager;
+    }
+    set manager(arg) {
+      this._manager = arg;
+    }
   }
-  
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /** 위임 숨기기 👍 **/
-  
-  class Person{
-    constructor(){
+
+  class Person {
+    constructor() {
       this._name = name;
     }
-    get name() {return this._name;}
-    get department() {return this._department}
-    set department(arg) {this._department = arg;}
+    get name() {
+      return this._name;
+    }
+    get department() {
+      return this._department;
+    }
+    set department(arg) {
+      this._department = arg;
+    }
     // 👉 manager를 가져오는 부분을 굳이 위임을 하지 않고 해당 class 내부에서 함수를 만들어 처리
-    get manager(){ return this._department.manager }
+    get manager() {
+      return this._department.manager;
+    }
   }
-  
+
   const aPerson = new Person();
   // .. 중간 코드 생략
-  console.log(aPerson.manager); // 위임을 숨김으로 써 department를 중간에 쓸 필요가 없음 
+  console.log(aPerson.manager); // 위임을 숨김으로 써 department를 중간에 쓸 필요가 없음
   ```
 
 ### 중개자 제거하기
+
 - `위임 숨기기`를 거꾸로 돌리는 리팩토링이다. 해당 방법을 반대로 하면 된다.
   - 위윔 숨기기를 너무 자주 사용하면 단순히 전달만 하는 위임 메서들이 점점 많아지며 성가셔진다.
   - 서버 클래스는 그저 중재자 역할로만 전락하는 문제가 생길 수 있다
 - 차리리 클라이언트가 위임 객체를 직접 호출하는 방식으로 다시 되돌리는게 나을 수도 있다.
   - `위임 숨기기`를 반대로하는 것!
-- 어느정도까지 숨겨야하고 어느 정도까지 중개자를 사용해야하는지 판단하는 것은 쉽지 않겠지만 상황에 따라  `위임 숨기기` or `중개자 제거하기`를 선택하여 사용하자
+- 어느정도까지 숨겨야하고 어느 정도까지 중개자를 사용해야하는지 판단하는 것은 쉽지 않겠지만 상황에 따라 `위임 숨기기` or `중개자 제거하기`를 선택하여 사용하자
 - ✅ 예시 코드는 `위임 숨기기` 리팩토링 방식을 반대로 돌리면 되기에 생략한다!
 
-
 ### 알고리즘 교체하기
+
 - 사용 중인 로직의 알고리즘이 더 간단한 방법을 찾거나 훨씬 효율적인 코드를 사용 또는 같은 기능을 하는 라이브러리를 찾을 경우 사용한다.
 - 해당 리팩토링의 핵심
   - 거대하고 복잡한 알고리즘의 경우 잘게 나눴는지 확인 -> 유닛별로 테스트하기 위함
   - 알고리즘을 간소화가 잘되었느지
   - TDD를 사용하여 꼭 기존의 값과 정합성을 테스트해야한다.
-- 예시 
+- 예시
+
   ```javascript
-  const foundPerson = (people) =>{
-   for(let item of people){
-     if(item === "Don") return "Done";
-     if(item === "John") return "John";
-     if(item === "Kent") return "Kent";
-     return "";
-   }//for
-  }
-  
+  const foundPerson = (people) => {
+    for (let item of people) {
+      if (item === "Don") return "Done";
+      if (item === "John") return "John";
+      if (item === "Kent") return "Kent";
+      return "";
+    } //for
+  };
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /** 알고리즘 교체 👍 **/
-  
-  const foundPerson = (people) =>{
+
+  const foundPerson = (people) => {
     const dandidates = ["Don", "John", "Kent"];
-    return people.find(p=> dandidates.includes(p)) || "" ;
-  }
+    return people.find((p) => dandidates.includes(p)) || "";
+  };
   ```
 
 <hr/>
 
 ## 기능 이동
+
+### 함수 옮기기
+
+- 좋은 소프트웨어 설계의 핵심은 모듈성이다.
+  - 프로그램의 어딘가를 수정할 때 해당 기능과 깊이 관련된 작은 일부만 이해 해도 가능하게 해주는 능력이다.
+- 모듈성을 높이는 방법
+  - 서로 연관된 요소들을 함께 묶고, 요소 사이의 연결 관계를 쉽게 찾고 이해할 수 있도록 해야한다.
+    - 이해도가 높아질수록 소프트웨어 요소들을 더 잘 묶는 새로운 방법을 꺠우치게 된다.
+- 객체 지향 프로그램의 핵심 모듈화 컨텍스트는 클래스이다. 프로그래밍 언어들은 저마다 모듈화 수단을 제공하며 각각의 수단이 함수가 살아 숨쉬는 컨텍스트를 만들어 준다.
+- `함수 옮기기`를 쉽게 이해하기
+  - 자신이 속한 모듈A의 요소들보다 모듈B의 요소들을 더 많이 참조한다면 모듈B로 옮겨주는것이 마땅하다.
+  - 함수를 옮길지 말지를 정하기 어렵다면 대상 함수의 현재 컨텍스트와 후보 컨텍스트를 둘러보면 도움이 된다.
+    - 대상 함수를 호출하는 함수들은 무엇인지
+    - 대상 함수가 호출하는 함수들은 또 무엇이 있는지
+    - 대상 함수가 사용하는 데이터는 무엇이 있는지
+- ⭐️ javascript기준 중첩함수는 되도록 만드는것을 피하자 --> 모듈화를 사용하자 `import or exprot`
+- 예시
+
+  ```javascript
+  function trackSummary(points) {
+    const totalTime = calculateTime();
+    const totalDistance = calculateDistance();
+    const pace = totalTime / 60 / totalDistance;
+    return {
+      time: totalTime,
+      distance: totalDistance,
+      pace,
+    };
+
+    /**
+     👉 총 거리 계산 함수
+    */
+    function calculateDistance() {
+      let result = 0;
+      for (let i = 0; i < points.length; i++) {
+        result += distance(points[i - 1], points[i]);
+      } // for
+      return result;
+    } // fun
+
+    function distance(p1, p2) {} // 두 지점의 거리 계산
+    function radians(degrees) {} // 라디안 값으로 변환
+    function calculateTime() {} // 총 시간 계산
+  } // fun
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /** 함수 옮기기 👍 **/
+
+  // 👉 함수를 분리해준 후 매개변수"points"를 추가
+  function totalDistance(points) {
+    let result = 0;
+    for (let i = 0; i < points.length; i++) {
+      result += distance(points[i - 1], points[i]);
+    } // for
+    return result;
+
+    //
+    /**
+     * 👉 distance해당 함수를 사용 하는 부분은
+     * trackSummary가 아닌 totalDistance 함수이므로 이동
+     * - 추가적으로 radians()함수를 사용하는 부분은 distance(p1, p2)함수 내부이다 - 생략했음
+     */
+    function distance(p1, p2) {}
+    function radians(degrees) {}
+  } // fun
+
+  // 👉 중첩함수에서 제거
+  function calculateTime() {}
+
+  function trackSummary(points) {
+    const totalTime = calculateTime();
+    // 👉 totalDistance -> totalDistance() 변수인라인으로 해결
+    const pace = totalTime / 60 / totalDistance(points);
+    return {
+      time: totalTime,
+      distance: totalDistance(points),
+      pace,
+    };
+  } // fun
+  ```
 
 <hr/>
 
