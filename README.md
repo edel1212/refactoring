@@ -1428,6 +1428,7 @@ const newEnglanders = someCustomers.filter((c) =>
     let youngest = people[0] ? people[0].age : Infinity;
     let totalSalary = 0;
 
+    // 반복문 내부에서 최소 나이와 총 급여를 구하는 두가지를 구행 함👎
     for (const p of people) {
       if (p.age < youngest) youngest = p.age;
       totalSalary += p.salary;
@@ -1443,6 +1444,8 @@ const newEnglanders = someCustomers.filter((c) =>
   function fn() {
     return `최연소: ${youngestAge()}, 총급여: ${totalSalary()}`;
 
+    /** 👉 반복문을 쪼갠 후 함수화 하여 내장 함수로 코드를 간결화 시킴 */
+
     function totalSalary() {
       return people.reduce((total, p) => total + p.salary, 0);
     }
@@ -1450,6 +1453,56 @@ const newEnglanders = someCustomers.filter((c) =>
     function youngestAge() {
       return Math.min(...people.map((p) => p.age));
     }
+  }
+  ```
+
+### 반복문을 파이프라인으로 바꾸기
+
+- 언어는 계속해서 발전하여 더 나은 구조로 제공하는 쪽으로 발전했다.
+- 컬렉션 파이프라인을 이용하면 처리 과정을 일련의 연산을 표현할 수 있다.
+  - javascript에서는 `map, filter, find, include`등등 ..
+  - java에서는 `stream()`
+- 위와 같은 방식은 체이닝 방식으로 코드가 더 간결해지고 직관적이라 이해하기가 쉬워진다.
+- 예시
+
+  ```javascript
+  function acquireData(input) {
+    const lines = input.split("\n");
+    let firstLine = true;
+    const result = [];
+
+    for (const line of lines) {
+      if (firstLine) {
+        firstLine = false;
+        continue;
+      }
+      if (line.trim() === "") continue;
+
+      const record = line.split(",");
+
+      if (record[1].trim() === "India") {
+        result.push({ city: record[0].trim(), phone: record[2].trim });
+      }
+    }
+    return result;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /** 반복문을 파이프라인으로 바꾸기 👍 **/
+
+  function acquireData(input) {
+    const lines = input.split("\n");
+
+    const result = lines
+      .slice(1)
+      .filter((line) => line.trim() !== "")
+      .map((line) => line.split(","))
+      .filter((fields) => fields[1].trim() === "India")
+      .map((fields) => ({ city: fields[0].trim(), phone: fields[2].trim }));
+
+    return result;
   }
   ```
 
