@@ -1270,6 +1270,36 @@ const newEnglanders = someCustomers.filter((c) =>
   - 함수에 어떤 레코드 또는 클래스를 넘길때 마다 또 다른 레코드의 필드도 함께 넘기고 있다면 데이터 위치를 옮기야 할 타이밍이다.
     - 함수에 항상 함꼐 던네지는 데티어 조각들은 상호 관계가 명확하게 드러나도록 한개의 레코드에 답는 것이 가장 좋다.
   - 한 레코드를 변경할 때 다른 레코드의 필드까지 변경해야만 한다면 필드의 위치가 잘못 선정되었다는 신호다.
+- 예시
+
+  ```javascript
+  result.push(`<p>제목: ${person.photo.title}</p>`);
+  result.concat(photoData(person.photo));
+
+  function photoData(aPhoto) {
+    return [
+      `<p>위치: ${aPhoto.location}</p>`,
+      `<p>날짜: ${aPhoto.date.toDateString()}</p>`,
+      `<p>태그: ${aPhoto.tag}</p>`,
+    ];
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /** 문장을 함수로 옮기기 👍 **/
+  result.concat(photoData(person.photo));
+
+  function photoData(aPhoto) {
+    return [
+      // 👉 불필요하게 외부에서 push하던 기능을 내부 함수로 옮겨 줌
+      `<p>제목: ${aPhoto.title}</p>`,
+      `<p>위치: ${aPhoto.location}</p>`,
+      `<p>날짜: ${aPhoto.date.toDateString()}</p>`,
+      `<p>태그: ${aPhoto.tag}</p>`,
+    ];
+  }
+  ```
 
 ### 문장을 함수로 옮기기
 
