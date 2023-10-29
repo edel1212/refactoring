@@ -1751,32 +1751,50 @@ const newEnglanders = someCustomers.filter((c) =>
 
   - or을 사용할 경우
 
-  ```javascript
-  const disabilityAmount = (anEmpolyee) => {
-    if (anEmpolyee.seniority < 2) return 0;
-    if (anEmpolyee.monthsDisabled > 12) return 0;
-    if (anEmpolyee.isPartTime) return 0;
-  };
+    ```javascript
+    const disabilityAmount = (anEmpolyee) => {
+      if (anEmpolyee.seniority < 2) return 0;
+      if (anEmpolyee.monthsDisabled > 12) return 0;
+      if (anEmpolyee.isPartTime) return 0;
+    };
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /** 조건식 통합하기 - or사용 👍 **/
+    /** 조건식 통합하기 - OR 사용 👍 **/
 
-  const disabilityAmount = (anEmpolyee) => {
-    // 👉 내부 함수로 변경 -- 해당 조건이 true 일 경우 0 반환!!!
-    if (isNotEligibleForDisabilty()) return 0;
+    const disabilityAmount = (anEmpolyee) => {
+      // 👉 내부 함수로 변경 -- 해당 조건이 true 일 경우 0 반환!!!
+      if (isNotEligibleForDisabilty()) return 0;
 
-    // 👉 이전 코드는 0을 반환하기 위해
-    function isNotEligibleForDisabilty() {
-      return (
-        anEmpolyee.seniority < 2 ||
-        anEmpolyee.monthsDisabled > 12 ||
-        anEmpolyee.isPartTime
-      );
+      // 👉 조건 로직을 한곳으로 몰아 넣음
+      function isNotEligibleForDisabilty() {
+        return (
+          anEmpolyee.seniority < 2 ||
+          anEmpolyee.monthsDisabled > 12 ||
+          anEmpolyee.isPartTime
+        );
+      }
+    };
+    ```
+
+  - And을 사용할 경우
+
+    ```javascript
+    if (anEmployee.onVacation) {
+      if (anEmployee.seniority > 10) {
+        return 1;
+      }
+      return 0.5;
     }
-  };
-  ```
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /** 조건식 통합하기 - AND 사용 👍 **/
+    if( (anEmployee.onVacation) && (anEmployee.seniority > 10) ) return 1;
+    return 0.5;
+    ```
 
 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 
