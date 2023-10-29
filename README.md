@@ -317,44 +317,56 @@ const newEnglanders = someCustomers.filter((c) =>
   - 6 . 변경이 끝났다면 기존의 매개변수를 제거하고 테스트한다.
 - 예시
 
-  ```javscript
+  ```javascript
   /** 온도 측정값 배열에서 정상 작동 범위를 벗어난 것이 있는지 검사하는 코드 */
 
   // 온도 측정값
-  const station = { name : "ZB1",
-                    reading : [
-                         {temp : 46, time : "2016-11-10 09:10"},
-                         {temp : 53, time : "2016-11-10 09:20"},
-                         {temp : 16, time : "2016-11-10 09:30"},
-                    ]}
+  const station = {
+    name: "ZB1",
+    reading: [
+      { temp: 46, time: "2016-11-10 09:10" },
+      { temp: 53, time: "2016-11-10 09:20" },
+      { temp: 16, time: "2016-11-10 09:30" },
+    ],
+  };
 
   // 정상 범위를 벗어난 측정값을 찾는 함수
-  function readingOutsideRange(station, min, max){
-    return station.readings.filter(r => r.temp < min || r.temp > max);
+  function readingOutsideRange(station, min, max) {
+    return station.readings.filter((r) => r.temp < min || r.temp > max);
   }
 
   // 함수 호출
-  alerts = readingsOutsideRange(station
-                              , operatingPlan.temperaturFloor     // 최저 온도
-                              , operatingPlan.temperaturCeiling); // 최고 온도
-
+  alerts = readingsOutsideRange(
+    station,
+    operatingPlan.temperaturFloor, // 최저 온도
+    operatingPlan.temperaturCeiling
+  ); // 최고 온도
 
   // 👉 위에서 사용하는 최저,최고 온도를 class로 묶어줌
-  class NumberRange{
-    constructor(min, max){
-      this._data = {min : min, max : max}
+  class NumberRange {
+    constructor(min, max) {
+      this._data = { min: min, max: max };
     }
-    get min() {return this._data.min}
-    get max() {return this._data.max}
+    get min() {
+      return this._data.min;
+    }
+    get max() {
+      return this._data.max;
+    }
   }
 
   // 👉 기존 함수를 "함수 선언 바꾸기"를 사용해서 매개변수를 변경
-  function readingOutsideRange(station, range){
-    return station.readings.filter(r => r.temp < range.min || r.temp > range.max);
+  function readingOutsideRange(station, range) {
+    return station.readings.filter(
+      (r) => r.temp < range.min || r.temp > range.max
+    );
   }
 
   // 👉 변경된 형식으로 호출
-  const range = new NumberRange(operatingPlan.temperaturFloor, operatingPlan.temperaturCeiling); // 객체 생성
+  const range = new NumberRange(
+    operatingPlan.temperaturFloor,
+    operatingPlan.temperaturCeiling
+  ); // 객체 생성
   alerts = readingOutsideRange(station, range);
   ```
 
@@ -364,7 +376,7 @@ const newEnglanders = someCustomers.filter((c) =>
   - 간단한 예시로는 페이징을 사용할때 만들었던 DTO를 생각하면 될듯하다.
     - 항상 받는 파라미터는 정해져있고 그걸로 목록함수, 다음, 이전 유무 메서드 등등 을 작성해준다.
 
-  ```javascipt
+  ```javascript
   // 👉 데이터 범위 class
   class NumberRange{
     constructor(min, max){
@@ -403,27 +415,28 @@ const newEnglanders = someCustomers.filter((c) =>
   - 3 . 데이터를 조작하는 로직들은 `함수로 추출`해서 새 클래스로 옮긴다.
 - 예시
 
-  ```javascipt
+  ```javascript
   /** 정부에처 차를 수돗물처럼 제공하는 프로그램 예시 사람들은 매달 차 계기량을 읽어서 측정값을 기록함 */
 
   // 차량 계기량 측정값
-  reading = {customer : "ivan", quantity : 10 , month :  5 , year : 2017};
+  reading = { customer: "ivan", quantity: 10, month: 5, year: 2017 };
 
   /** 문제의 코드 같은 로직의 함수가 중복되어 사용되고 있다👎 **/
   // 클라이언트1
   const aReading = acquiredRading();
-  const baseChage = baseRate(aReading.monht, aReading.year) * aReading.quantity;    // 기본 요금 계산
+  const baseChage = baseRate(aReading.monht, aReading.year) * aReading.quantity; // 기본 요금 계산
 
   // 클라이언트2
   const aReading = acquiredRading();
-  const base = baseRate(aReading.monht, aReading.year) * aReading.quantity;         // 기본 요금 계산
-  const taxableCharge = Math.max(0, base - taxThreshold(aReading.year));            // 차 소비량만큼 면세
+  const base = baseRate(aReading.monht, aReading.year) * aReading.quantity; // 기본 요금 계산
+  const taxableCharge = Math.max(0, base - taxThreshold(aReading.year)); // 차 소비량만큼 면세
 
   // 클라이언트3
   const aReading = acquiredRading();
   const basicChargeAmount = calcualteBaseChage(aReading);
 
-  function calculateBaseCharge(aReading){ // 기본 요금 계산 함수
+  function calculateBaseCharge(aReading) {
+    // 기본 요금 계산 함수
     return baseRate(aReading.monht, aReading.year) * aReading.quantity;
   }
 
@@ -432,47 +445,53 @@ const newEnglanders = someCustomers.filter((c) =>
 
   /** 리팩토링 👍 **/
   //  레코드를 클래스로 변환하기위해 캡슐화를 진행
-  class Reading{
-    constructor(data){
+  class Reading {
+    constructor(data) {
       this._customer = data.customer;
       this._quantity = data.quantity;
-      this._month    = data.month;
-      this._year     = data.year;
+      this._month = data.month;
+      this._year = data.year;
     }
-    get customer(){return this._customer;}
-    get quantity(){return this._quantity;}
-    get month(){return this._month;}
-    get year(){return this._year;}
+    get customer() {
+      return this._customer;
+    }
+    get quantity() {
+      return this._quantity;
+    }
+    get month() {
+      return this._month;
+    }
+    get year() {
+      return this._year;
+    }
 
     // 👉 함수 이름을 원하는대로 바꿔주자 "함수 이름 바꾸기"
-    get baseCharge(){
+    get baseCharge() {
       return baseRate(this._monht, this._year) * this._quantity;
     }
 
     // 👉 클라이언트2에서 사용하던 불필요하게 긴 로직을 같은 레코드를 쓰는 해당 클래스에서 메서드로 만들어줌
-    get taxableCharge(){
-      return Math.max(0, this.baseChage - taxThreshold(this._year))
+    get taxableCharge() {
+      return Math.max(0, this.baseChage - taxThreshold(this._year));
     }
-
   }
 
   // 클라이언트 3
   const rawReading = acquiredRading();
-  const aReading   = new Reading(rawReading);
+  const aReading = new Reading(rawReading);
   // 💬 아래와 같이 이름을 바꾸고 나면 해당 baseCharge 값이 "필드 값" 인지 "계산된 값(메서드 호출 값)"인지 구분할수 없다
   //    이는 "단일 접근 원칙"을 따르므로 권장하는 방식이다. 👍
   const basicChargeAmount = aReading.baseCharge;
 
   // 클라이언트 1
   const rawReading = acquiredRading();
-  const aReading   = new Reading(rawReading);
+  const aReading = new Reading(rawReading);
   const baseCharge = aReading.baseCharge;
 
   // 클라이언트2
-  const rawReading    = acquiredRading();
-  const aReading      = new Reading(rawReading);
-  const taxableCharge =  aReading.taxableCharge;
-
+  const rawReading = acquiredRading();
+  const aReading = new Reading(rawReading);
+  const taxableCharge = aReading.taxableCharge;
   ```
 
 ### 여러 함수를 변환 함수로 묶기
@@ -622,7 +641,7 @@ const newEnglanders = someCustomers.filter((c) =>
 
   - 간단한 레코드 캡슐화하기
 
-  ```javascipt
+  ```javascript
   // 프로그램 곳곳에서 레코드 구조ㄹ로 사용하는 객체
   const organization = {namr : "애크미 구스베리", country : "GB"};
 
@@ -653,79 +672,84 @@ const newEnglanders = someCustomers.filter((c) =>
 
   - 중첩된 레코드 캡슐화하기
 
-  ```javascipt
+  ```javascript
   // 여러겹이 중첩된 레코드 - 중첩 정도가 심할수록 읽거나 쓸 떄 데이터 구조안으로 더 깊숙히 들어가야함
   const customerData = {
-   1994: {
-    name: "seunghwan",
-    id: "1994",
-    usages: {
-      2020: {
-        1: 50,
-        2: 55,
-      },
-      2021: {
-        1: 70,
-        2: 63,
-      },
-    },
-  },
-  1997: {
-    name: "pauler",
-    id: "1994",
-    usages: {
-      2020: {
-        1: 50,
-        2: 55,
-      },
-      2021: {
-        1: 70,
-        2: 63,
+    1994: {
+      name: "seunghwan",
+      id: "1994",
+      usages: {
+        2020: {
+          1: 50,
+          2: 55,
+        },
+        2021: {
+          1: 70,
+          2: 63,
+        },
       },
     },
-   },
+    1997: {
+      name: "pauler",
+      id: "1994",
+      usages: {
+        2020: {
+          1: 50,
+          2: 55,
+        },
+        2021: {
+          1: 70,
+          2: 63,
+        },
+      },
+    },
   };
 
   // 쓰기 예
   customerData[customerID].usages[year][month] = amount;
 
   // 읽기 예
-  function compareUsage(customerID, laterYear, month){
+  function compareUsage(customerID, laterYear, month) {
     const later = customerData[customerID].usage[lateYear][month];
     const earlier = customerData[customerID].usage[lateYear - 1][month];
-    return {laterAmount : later, change : later - earlier};
+    return { laterAmount: later, change: later - earlier };
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   /** 리팩토링 캡슐화 👍 **/
-  class CustomerData{
-    constructor(data){
+  class CustomerData {
+    constructor(data) {
       this._data = data;
     }
 
     // 내부 데이터 수정
-    setUsage(customerID, year, month, amount){
-      this._data[customerID].usages[year][month]
+    setUsage(customerID, year, month, amount) {
+      this._data[customerID].usages[year][month];
     }
 
     // 데이터 복사본을 반환함
-    get rawData(){
+    get rawData() {
       // 👉 깊은 복사
       return _.cloneDeep(this.data);
     }
 
     // 사용량 반환
-    usage(customerID, year, month){
+    usage(customerID, year, month) {
       return this._data[customerID].usages[year][month];
     }
   }
 
-  function getCustomerData() {return constoerData;}
-  function setRawDataOfCustomers(arg) {customerData = new CustomerData(arg);}
-  function getRawDataOfCustomers(){ return customerData.rawData; }
-
+  function getCustomerData() {
+    return constoerData;
+  }
+  function setRawDataOfCustomers(arg) {
+    customerData = new CustomerData(arg);
+  }
+  function getRawDataOfCustomers() {
+    return customerData.rawData;
+  }
   ```
 
 ### 컬렉션 캡슐화하기
@@ -1774,75 +1798,6 @@ const newEnglanders = someCustomers.filter((c) =>
 
 - 매개변수 목록이 길어지면 그 자체로 이해하가 어려우므로 리팰토링 해줄 필요가 있다.
 - 다른 매개 변수에서 값을 얻어 와야하는 매개 변수가 있는데 이런 경우 `매개변수를 질의 함수 바꾸기`로 제거 할 수 있다.
-
-```javscript
-// 👎 원래 코드
-class ComedyCalculator extends PerformanceCalculator {
-  get amount() {
-    let result = 30000;
-    if (this.performance.audience > 20) {
-      result += 10000 + 500 * (this.performance.audience - 20);
-    }
-    result += 300 * this.performance.audience;
-    return result;
-
-
-  }
-}
-
-/*************************************************************************************/
-/*************************************************************************************/
-
-// 👍 매개변수를 질의 함수로 바꿈
-class ComedyCalculator extends PerformanceCalculator {
-  get amount() {
-    return 30000 + this.bonusAmount;
-  }
-
-  get bonusAmount() {
-    return this.overThresholdAmount + this.perAudienceAmount;
-  }
-
-  get overThresholdAmount() {
-   // 👉 if (this.performance.audience > 20) 대체 가능 이유는 20 보다 큰지 확인 하는 것이기 떄문 생각해보면 당연한것 !
-    return Math.max(this.performance.audience - 20, 0) * 500;
-  }
-
-  get perAudienceAmount() {
-    return 300 * this.performance.audience;
-  }
-}
-```
-
-- 사용 중인 데이터 구조에서 값들을 뽑아서 각가의 별개의 매개변수를 전달하는 코드라면 `객체 통째로 넘기기`를 적용해서 원본 데이터 구조를 그대로 전달한다.
-- 항상 함께 전달되는 매개변수들의 그룹이 있다면 해댕 목록의 변수들을 `매개변수 객체 만들기`를 사용해주자
-- 함수의 동장 방식을 정하는 플래그 역할의 매개변수는 `플래그 인수 제거하기`로 없애준다.
-  - 코드를 이해하기 어려워지기 때문 이럴 경우 메서드를 `2개로 나눠서` 사용해주는것이 더욱 가독성이 높디.
-
-```javascript
-// 👎 원래 코드
-function calculateTotal(amount, applyDiscount) {
-  if (applyDiscount) {
-    // 할인을 적용하는 로직
-    return amount * 0.9;
-  } else {
-    return amount;
-  }
-}
-
-/*************************************************************************************/
-/*************************************************************************************/
-
-// 👍 메서드를 분리함
-function calculateTotalWithoutDiscount(amount) {
-  return amount;
-}
-
-function calculateTotalWithDiscount(amount) {
-  return amount * 0.9;
-}
-```
-
 - 클래스를 활용 하는 것도 매개변수 목록을 줄이는데 효적인 수단이다.
   - 여러 개의 함수가 특정 매개변수들의 값을 공통적으로 사용할 경우 `여러 함수를 클래스로 묶어` 사용해 주자.
 
@@ -1906,72 +1861,6 @@ function calculateTotalWithDiscount(amount) {
 
 - 같은 조건으로 반복되는 switch문은 다형성을 통해 리팩토링이 가능하다.
 
-```javascipt
-// 👎 원래 코드
-class Shape {
-  constructor(type) {this.type = type;}
-
-  area() {
-    switch (this.type) {
-      case 'circle':
-        return Math.PI * this.radius * this.radius;
-      case 'rectangle':
-        return this.width * this.height;
-      // 등등 ..
-    }// switch
-  }// area
-}
-
-// 원 class
-class Circle extends Shape {
-  constructor(radius) {
-    super('circle');
-    this.radius = radius;
-  }// constructor
-}
-
-// 직사각형 class
-class Rectangle extends Shape {
-  constructor(width, height) {
-    super('rectangle');
-    this.width = width;
-    this.height = height;
-  } // constructor
-}
-
-/*************************************************************************************/
-/*************************************************************************************/
-
- // 👍 전역 변수를 캡슐화 시킴
-class Shape {
-  constructor() {}
-  area() {}
-}
-
-class Circle extends Shape {
-  constructor(radius) {
-    super();
-    this.radius = radius;
-  }
-
-  area() {
-    return Math.PI * this.radius * this.radius;
-  }
-}
-
-class Rectangle extends Shape {
-  constructor(width, height) {
-    super();
-    this.width = width;
-    this.height = height;
-  }
-
-  area() {
-    return this.width * this.height;
-  }
-}
-```
-
 ### 추측성 일반화
 
 - "나중에 필요할 거야"라는 생각으로 당장은 필요 ㅇ벗느 모든 종류의 후킹 포인트와 특이 케이스 처리 로직을 작성해 둔 코드를 작성 해 놓는 문제.
@@ -1982,27 +1871,6 @@ class Rectangle extends Shape {
 
 - 특정 상황에서만 값이 설정되는 필드를 가진 클래스가 있는데 객체를 가져올때는 당연히 모든 필드가 채워져 있으리라 기대하는 게 보통이기에 해당 파일을 보기 전까지 알수가  
   없다는 단점이 있다.
-
-```javascipt
-//  임시 필드 예시
-class Order {
-  constructor(id) {
-    this.id = id;
-    this.items = [];
-    this.isProcessed = false; // 👉 임시 필드 코드를 열기까지  알 수가 없음
-  }
-
-  addItem(item) {
-    this.items.push(item);
-  }
-
-  process() {
-    // 주문 처리 로직
-    this.isProcessed = true;
-  }
-}
-```
-
 - 임시 필드는 클래스 추출하기로 위치를 변경해준 후 함수 옮기기로 임시 필드들과 관련도니 코드를 새 클래스로 몰아 넣자.
 - `특이 케이스 추가하기`로 필드들이 유효하지 않을 때 위한 대안 클래스를 만들어 주는 방법도 있다.
 
@@ -2012,27 +1880,7 @@ class Order {
 - 사용 시 네비게이션 중간 단계를 수정하면 클라이언트의 코드도 수정해야하는 문제가 생길 때가 있다.
 
   - `managerName = aPerson.departmane.manager.name` -> 중간의 `manager`가 변경 되면 해당 코드를 사용하는 전체를 수정해야함.
-
     - 이러한 경우 `위임 숨기기` 와 `함수 옮기기`러 함수를 추출하여 객체를 사용하는 코드를 뺴내어서 사용하면 된다.
-
-    ```javascript
-    // 👎 변경 전
-    managerName = aPerson.department.manager.name;
-
-    /*************************************************************************************/
-    /*************************************************************************************/
-    // 👍 변경 후
-    class reportAutoGenerator {
-      constructor(aPerson) {
-        this.aPerson = aPerson;
-      } // constructor
-
-      report() {
-        return this.aPerson.department.manager.name;
-      }
-    }
-    console.log(reportAutoGenerator.report(aPerson));
-    ```
 
 ### 중개자
 
