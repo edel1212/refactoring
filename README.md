@@ -1853,6 +1853,10 @@ const newEnglanders = someCustomers.filter((c) =>
   }
   ```
 
+  - 추가 예시 코드 링크
+    - [예시](https://github.com/edel1212/refactoring/blob/main/refactoringSkills/functionMove/ex07.js)
+    - [예시2](https://github.com/edel1212/refactoring/blob/main/refactoringSkills/functionMove/ex08.js)
+
 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 
 <hr/>
