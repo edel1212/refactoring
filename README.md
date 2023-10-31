@@ -1823,14 +1823,19 @@ const newEnglanders = someCustomers.filter((c) =>
   ```javascript
   function getPayAmount() {
     let result;
-    if (isDead) result = deadAmount();
-    else {
-      if (isSeparated) result = separatedAmount();
-      else {
-        if (isRetired) result = retiredAmount();
-        else result = normalPayAmount();
-      }
-    }
+    if (isDead) {
+      result = deadAmount();
+    } else {
+      if (isSeparated) {
+        result = separatedAmount();
+      } else {
+        if (isRetired) {
+          result = retiredAmount();
+        } else {
+          result = normalPayAmount();
+        } // if - else
+      } // if - else
+    } // if - else
     return result;
   }
 
