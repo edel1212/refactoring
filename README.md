@@ -1868,6 +1868,8 @@ const newEnglanders = someCustomers.filter((c) =>
   - 기본 동작을 위한 Case문과 그 `변형 동작으로 구성된 로직일 경우 해당 로직을 슈퍼클래스로 넣어서` 변형 동작에 신경쓰지 않고  
     **기본에 집중하게한 후** 변형 동작을 뜻하는 case들의 각각의 서브클래스를 만드는 방법이 있다.
 - 단 남용은 금지이다. 모든 조건부 로직을 다형성으로 대체하는건 오히려 안좋은 방식 이므로 앞서 말한 경우에는 해당 방법을 사용하자 **남용 금지!**
+- 예시
+  - [링크]("https://github.com/edel1212/refactoring/blob/main/refactoringSkills/conditional/ex01.js")
 
 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 
