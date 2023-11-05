@@ -2013,17 +2013,7 @@ const newEnglanders = someCustomers.filter((c) =>
 
   // 👉 기존 serOffAlarms() 분리
   const alertForMiscreant = (people) => {
-    for (const p of people) {
-      if (p === "조커") {
-        serOffAlarms();
-        return;
-      } //if
-      if (p === "사루만") {
-        serOffAlarms();
-        return;
-      } // if
-      return;
-    } //for
+    if (findMiscreant(people !== "")) setOffAlarms();
   };
   ```
 
