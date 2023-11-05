@@ -2017,6 +2017,46 @@ const newEnglanders = someCustomers.filter((c) =>
   };
   ```
 
+### 함수 매개변수화하기
+
+- 두 함수의 로직이 아주 비슷한데 단지 리터럴 값만 다르다면, 그 다른 갓만 매개변수로 받아 처리하는 함수 하나로 합쳐 중복을 코드를 제거할 수 있다.
+  - 매개변수 값만 바꿔서 여러 곳에서 쓸 수 있으니 함수의 유용성이 커진다.
+- 예시
+
+  ```javascript
+  function baseCharge(usage) {
+    if (usage < 0) return usd(0);
+    const amount =
+      bottomBand(usage) * 0.03 +
+      middleBand(usage) * 0.05 +
+      topBand(usage) * 0.07;
+    return usd(amount);
+  }
+
+  const bottmeBand = (usage) => Math.min(usage, 100);
+  const middleBand = (usage) => (usage > 100 ? Math.min(usage, 200) - 100 : 0);
+  const topBand = (usage) => (usage > 200 ? usage - 200 : 0);
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /** 함수 매개변수화하기 👍 **/
+
+  // 👉 두 개의 리터럴(100, 200)를 사용하며, 이는 중간 대역의 하한(bottom)과 상한(top)을 정해준다.
+  function withinBand(usage, bottom, top) {
+    return usage > bottom ? Math.min(usage, top) - bottom : 0;
+  }
+
+  function baseCharge(usage) {
+    if (usage < 0) return usd(0);
+    const amount =
+      withinBand(usage, 0, 100) * 0.03 +
+      withinBand(usage, 100, 200) * 0.05 +
+      withinBand(usage, 200, Infinity) * 0.07; // top의 경우 최대치(Infinity)를 넣어서 해결함
+    return usd(amount);
+  }
+  ```
+
 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 
 <hr/>
