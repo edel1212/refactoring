@@ -2011,7 +2011,7 @@ const newEnglanders = someCustomers.filter((c) =>
     } //for
   };
 
-  // 👉 기존 serOffAlarms() 분리
+  // 👉 findMiscreant을 반환 값을 받아 해당 값을 조건식으로 사용
   const alertForMiscreant = (people) => {
     if (findMiscreant(people !== "")) setOffAlarms();
   };
