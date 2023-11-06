@@ -2298,6 +2298,82 @@ const newEnglanders = someCustomers.filter((c) =>
   let leadEngineer = creactEngineer(document.leadEngineer, document.type);
   ```
 
+### 함수를 명령으로 바꾸기
+
+- 함수를 그 함수만을 위한 객체 안으로 캡슐화하면 더 유용해지는 상황이 있다.
+  - 이런 객체를 가리켜 `"명령 객체"` 혹은 단순히 `명령`이라한다.
+  - 명령 객체는 대부분의 메서드 하나로 구성되며, 메서드를 요청해 실행하는 것이 이 객체의 목적이다.
+- 상속과 훅을 이용해 사용자 맞춤으로 만들 수 있는 확장성을 갖고 있다.
+- 메서드와 필드를 이용해 복잡한 함수를 잘게 쪼갤 수 있고, 이렇게 쪼갠 메서드들을 테스트와 디버깅에 직접 이용할 수 있다.
+- 주의사항
+  - 함수를 명령으로 변경하면 유연성은 복잡성을 키우고 얻는 대가임을 잊지말아야한다.
+    - 따라서 독자는 일급 함수와 명령 중 하나를 선택한다면 일급 함수를 선택한다고 한다 ...? 뭐지 ..
+- 예시
+
+  ```javascript
+  // 건강보험 애플리케이션에서 사용하는 점수 계산 함수
+  function score(candidate, medicalExam, scoringGuide) {
+    let result = 0;
+    let healthLevel = 0;
+    let highMedicalRiskFlag = false;
+
+    if (medicalExam.isSmoker) {
+      healthLevel += 10;
+      highMedicalRiskFlag = true;
+    }
+
+    let certificationGrade = "regular";
+    if (scoringGuide.stateWithLowCertification(candidate.originState)) {
+      certificationGrade = "low";
+      result -= 5;
+    }
+
+    // lots more code like this
+    result -= Math.max(healthLevel - 5, 0);
+    return result;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /** 함수를 명령으로 바꾸기 👍 **/
+  function score(candidate, medicalExam, scoringGuide) {
+    return new Scorer(candidate, medicalExam, scoringGuide).execute();
+  }
+
+  class Scorer {
+    constructor(candidate, medicalExam, scoringGuide) {
+      this._candidate = candidate;
+      this._medicalExam = medicalExam;
+      this._scoringGuide = scoringGuide;
+    }
+    execute() {
+      let result = 0;
+      let healthLevel = 0;
+      let highMedicalRiskFlag = false;
+
+      if (this._medicalExam.isSmoker) {
+        healthLevel += 10;
+        highMedicalRiskFlag = true;
+      }
+
+      let certificationGrade = "regular";
+      if (
+        this._scoringGuide.stateWithLowCertification(
+          this._candidate.originState
+        )
+      ) {
+        certificationGrade = "low";
+        result -= 5;
+      }
+
+      // lots more code like this
+      result -= Math.max(healthLevel - 5, 0);
+      return result;
+    }
+  }
+  ```
+
 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 
 <hr/>
