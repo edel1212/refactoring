@@ -2341,6 +2341,7 @@ const newEnglanders = someCustomers.filter((c) =>
     return new Scorer(candidate, medicalExam, scoringGuide).execute();
   }
 
+  // 💯 Class로 묶은 후 비즈니스 로직을 execute()로 사용하게 변경
   class Scorer {
     constructor(candidate, medicalExam, scoringGuide) {
       this._candidate = candidate;
