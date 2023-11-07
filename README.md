@@ -2476,6 +2476,7 @@ const newEnglanders = someCustomers.filter((c) =>
     }
   }
 
+  // 2 . 함수 실행
   function calculateShippingCosts(anOrder) {
     const shippingRules = localShippingRules(anOrder.country);
   }
