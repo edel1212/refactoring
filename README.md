@@ -2432,6 +2432,62 @@ const newEnglanders = someCustomers.filter((c) =>
   function calculateDistance() {...}
   ```
 
+### 오류 코드를 예외로 바꾸기
+
+- 예외는 프로그래밍 언어에서 제공하는 독립적인 오류 처리 메커니즘이다. 오류가 발견되면 예외를 던진다.
+  - 적절한 예외 핸들러를 찾을 떄까지 콜스택을 타고 위로 전파된다
+- 예외를 사용하면 오류코드를 일일이 검사하거나 오류를 식별해 콜스택 위로 던지는 일을 신경씨지 않아도 된다.
+  - 예외는 독자적 흐름이 있어서 프로그램 나머지에서는 오류 발생에 따른 복잡한 상황에 대처하는 코드를 작성하거나 읽을 일이 없게 해준다.
+- 예외 처리는 프로그램의 정상 동작 범주에 들지 않는 오류를 나타낼 때만 쓰여야 한다.
+  - 정상 동작하지 않을 것 같다면 예외를 사용하지 말라는 신호다.
+- 예시
+
+  ```javascript
+  // 최상위
+  const status = calculateShippingCosts(orderData);
+  // 👉 에러가 반환되면 0보다 작음 그걸 에러list에 추가
+  if (status < 0) errorList.push({ order: orderData, errorCode: status });
+
+  function calculateShippingCosts(anOrder) {
+    const shippingRules = localShippingRules(anOrder.country);
+    if (shippingRules < 0) return shippingRules; // 오류 전파
+  }
+
+  // 데이터가 없을 경우 에러코드 -23 반환
+  function localShippingRules(country) {
+    const data = countryData.shippingRules[country];
+    if (data) return new ShippingRules(data);
+    else return -23;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /** 오류 코드를 예외로 바꾸기 👍 **/
+
+  try {
+    calculateShippingCosts(orderData);
+  } catch (e) {
+    // 3 . 예외처리 OrderProcessingError의 인스턴스일 때 에러목록에 추가
+    if (e instanceof OrderProcessingError) {
+      errorList.push({ order: orderData, errorCode: e.code });
+    } else {
+      throw e;
+    }
+  }
+
+  function calculateShippingCosts(anOrder) {
+    const shippingRules = localShippingRules(anOrder.country);
+  }
+
+  function localShippingRules(country) {
+    const data = countryData.shippingRules[country];
+    if (data) return new ShippingRules(data);
+    // 💬 1. 의도 하지 않는 로직 발생시 예외 클래스를 사용해 예외 발생
+    throw new OrderProcessingError(-23);
+  }
+  ```
+
 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 
 <hr/>
