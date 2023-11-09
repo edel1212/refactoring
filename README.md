@@ -2542,6 +2542,67 @@ const newEnglanders = someCustomers.filter((c) =>
   class Engineer extends Employee {}
   ```
 
+### 필드 올리기
+
+- 상속 관계를 구현하다보면 어느순간 필드가 중복되기 쉽다.
+- 필드들은 이름이 비슷한게 보통이지만, 항상 그렇지 많은 않기에 그래서 문제가 생기면 필드들이 어떻게 사용되는지 분석해야하는 번거로움이있다.
+- 분석결과 비슷한 방식으로 쓰인다면 해당 필드들을 슈퍼클래스로 올려주자!!
+- 슈퍼클래스로 필드를 올리면 장점
+  - 데이터 중복 선언을 없앨 수 있다.
+  - 해당 필드를 사요하는 동작을 서브클래스에서 슈퍼클래스로 옮길 수 있다.
+- 예시는 정말 간단하므로 생략 - 중복 필드를 부모에서 주면 된다!
+
+### 생성자 본문 올리기
+
+- 서브클래스들에서 기능이 같은 메서드들을 발견하면 `함수추출하기`와 `메서드 올리기`를 차례로 적용하여 말끔히 슈퍼클래스로 옮긴다.
+- 포인트는 공통된 문장을 부모로 옮기는 것인데 생성자 메서드의 경우도 예외없이 올려준 후 `super()`를 사용해 생성자를 만들어 사용해 주자
+- 예시
+
+  ```javascript
+  class Party {}
+
+  class Employee extends Party {
+    constructor(name, cost) {
+      super();
+      this._name = name;
+      this._cost = cost;
+    }
+  }
+
+  class Department extends Party {
+    constructor(name, staff) {
+      super();
+      this._name = name;
+      this._staff = staff;
+    }
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /** 생성자 본문 올리기 👍 **/
+  class Party {
+    // 💯 중복되는 name을 생성자를 올려서 해결
+    constructor(name) {
+      this._name = name;
+    }
+  }
+
+  class Employee extends Party {
+    constructor(name, cost) {
+      super(name);
+      this._cost = cost;
+    }
+  }
+
+  class Department extends Party {
+    constructor(name, staff) {
+      super(name);
+      this._staff = staff;
+    }
+  }
+  ```
+
 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 
 <hr/>
