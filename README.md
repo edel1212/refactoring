@@ -2514,6 +2514,33 @@ const newEnglanders = someCustomers.filter((c) =>
 - 반면 메서드 올리기를 적요하기 어려운 경우
   - 메서드의 본문에서 참조하는 필드들이 서브클래스에만 있는 경우이다
     - 해당 경우에는 필드들을 먼저 슈퍼클래스로 올린 후 리팩터링을 진행해야한다.
+- 예시
+
+  ```javascript
+  class Employee {}
+
+  class Salesperson extends Employee {
+    get name() {}
+  }
+
+  class Engineer extends Employee {
+    get name() {}
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /** 메서드 올리기 👍 **/
+
+  // 👉 간단하게 자식들이 중복으로 사용하는 메서드를 부모에거 주면 쉽게 해결된다!
+  class Employee {
+    get name() {}
+  }
+
+  class Salesperson extends Employee {}
+
+  class Engineer extends Employee {}
+  ```
 
 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
 
