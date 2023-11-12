@@ -26,8 +26,6 @@
     }
     // 위와 동일 한 코드 로직을 갖고 있음
 
-    function createEmployee(){
-
-    }
+    createEmployee() {}
   }
 }
